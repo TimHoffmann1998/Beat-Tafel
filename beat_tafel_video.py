@@ -1,73 +1,101 @@
 import numpy as np
 import cv2
 
-
-import numpy as np
-import cv2
-
-def do_nothing():
-    return
-
 cap = cv2.VideoCapture('beat_tafel.mp4')
 # Live-Video
 #cap = cv2.VideoCapture(0)
 
-#Erstellen der Trackbars
-cv2.namedWindow('Video_Ergebnis')
-cv2.createTrackbar("Hue", 'Video_Ergebnis', 177, 180, do_nothing)
-cv2.createTrackbar("Sat", 'Video_Ergebnis', 140, 255, do_nothing)
+#ergbnis_fenster = cv2.namedWindow('Video_Ergebnis')
 
 while cap.isOpened():
 
     # Einlesen der einzelnen Frames
     ret, frame = cap.read()
+    
+
+
 
     # Konvertieren von BGR zu HSV
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     h,s,v = cv2.split(hsv)
 
-    # Position der Trackbars auslesen
-    schwellwert_h = cv2.getTrackbarPos("Hue", 'Video_Ergebnis')
-    schwellwert_s = cv2.getTrackbarPos("Sat", 'Video_Ergebnis')
 
-    # Ermitteln der Grenzen
-    h_lowerb = schwellwert_h - 3
-    h_upperb = schwellwert_h + 3
 
-    s_lowerb = schwellwert_s - 15
-    s_upperb = schwellwert_s + 15
 
-    # inRange / Binärbild
-    hue_range = cv2.inRange(h, h_lowerb, h_upperb)
-    sat_range = cv2.inRange(s, s_lowerb, s_upperb)
+       
+    hueRange = cv2.inRange(h, 155, 175)
+    satRange = cv2.inRange(s, 50, 255)
 
-    # Ausgabe der Binärbilder Hue und Saturation
-    cv2.imshow('Video_Hue', hue_range)
-    cv2.imshow('Video_Saturation', sat_range)
+    maskeGruen = cv2.multiply(hueRange,satRange)
 
-    # Multilizieren beider Binärbilder
-    maske = cv2.multiply(hue_range,sat_range)
+    #cv2.imshow('Video_Hue', hueRange)
+    #cv2.imshow('Video_sat', satRange)
+
+    #cv2.imshow('Video_maske', maskeGruen)
+
+
+
+
+
+    # Median zur Entferung von unerwünschten Bereichen
+    ksize = 21
+    median = cv2.medianBlur(maskeGruen, ksize)
+
+
+
+
+
+    cv2.imshow('Video_median', median)
+
+    contours,hierarchy=cv2.findContours(median,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    for index in range(len(contours)):
+        area = cv2.contourArea(contours[index])
+        cv2.drawContours(frame,contours,index,(0,255,0),cv2.FILLED)
+    
+    
+
 
     # Schwerpunkt ermitteln
-    M = cv2.moments(maske)
-  
-    cX = int(M["m10"] / M["m00"])
-    cY = int(M["m01"] / M["m00"])
+    M = cv2.moments(median)
+    
+    if  M["m00"] == 0:
+        cX = 1
+    else:
+        cX = int(M["m10"] / M["m00"])
 
-    cv2.circle(frame, (cX, cY), 5, (255, 255, 255), -1)
+    if  M["m00"] == 0:
+        cY = 1
+    else:
+        cY = int(M["m01"] / M["m00"])
+
+
+    cv2.circle(median, (cX, cY), 5, (255, 255, 255), -1)
 
     # Textausgabe
-    cv2.putText(frame, "Y-Wert: " + str(cY), (cX - 0, cY - 25),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-    cv2.putText(frame, "X-Wert: " + str(cX), (cX - 0, cY - 9),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+    cv2.putText(median, "Y-Wert: " + str(cY), (cX - 0, cY - 25),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+    cv2.putText(median, "X-Wert: " + str(cX), (cX - 0, cY - 9),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
     print("Y-Wert: " + str(cY))
     print("X-Wert: " + str(cX))
 
-    
-    ksize = 7
-    median = cv2.medianBlur(maske, ksize)
 
+
+
+
+
+    # Rechteck zu den Feldes
     x, y, w, h = cv2.boundingRect(median)
-    frame = cv2.rectangle (frame, (x, y), (x + w, y + h), (0,255,0), 2)
+    cv2.rectangle (median, (x, y), (x + w, y + h), (52,26,77), 2)
+
+
+
+
+
+    median_color = cv2.cvtColor(median, cv2.COLOR_GRAY2BGR)
+    maske = cv2.multiply(median_color,frame)
+    cv2.imshow('Video_end', maske)
+
+
+
 
     # Bildausgabe
     cv2.imshow('Video_Ergebnis', frame)
