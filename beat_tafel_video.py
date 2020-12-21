@@ -2,24 +2,19 @@ import numpy as np
 import cv2
 import time
 
+# Hilfsvariable
 frameAuslesen = True
 
-# Farbtafel
+# Liste mit allen Farben (Farbton, Sättigung, Hellwert)
+colorListe = [165,52,12, 0,75,39, 70,78,27, 104,74,23, 23,78,39]
 
-# Rot
-
-
-
-
-
-
-
+# Einbindung des Videosignals
 cap = cv2.VideoCapture('beat_tafel.mp4')
+
 # Live-Video
 #cap = cv2.VideoCapture(0)
 
-#ergbnis_fenster = cv2.namedWindow('Video_Ergebnis')
-
+# Bestimmen der verschiedenen Regionen einer Farbe
 def regionErmitteln (index, countoursRange):
     minimumRange = min(countoursRange)
     maximumRange = max(countoursRange) + 1
@@ -31,7 +26,7 @@ def regionErmitteln (index, countoursRange):
     print(indexRange)
     return (indexRange)
 
-
+# Jedem Feld eine eindeutige Bezeichung zuordnen
 def feldNummer(maskeFarbe, contours):
     for index in range(len(contours)):
         
@@ -59,7 +54,7 @@ def feldNummer(maskeFarbe, contours):
         colorStr = str(colorNumb) + "." + str(cYRegion) + "." + str(cXRegion)
         print(colorStr)
 
-
+# Hauptskript
 while cap.isOpened() and frameAuslesen == True:
 
     # Einlesen der einzelnen Frames
@@ -68,6 +63,10 @@ while cap.isOpened() and frameAuslesen == True:
     # Konvertieren von BGR zu HSV
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     h,s,v = cv2.split(hsv)
+
+    colorElemente = len(colorListe) / 3
+
+    
 
 
 
