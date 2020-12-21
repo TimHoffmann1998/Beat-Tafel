@@ -4,6 +4,7 @@ import time
 
 # Hilfsvariable
 frameAuslesen = True
+colorListeIndex = 0
 
 # Liste mit allen Farben (Farbton, Sättigung, Hellwert)
 colorListe = [165,52,12, 0,75,39, 70,78,27, 104,74,23, 23,78,39]
@@ -14,17 +15,21 @@ cap = cv2.VideoCapture('beat_tafel.mp4')
 # Live-Video
 #cap = cv2.VideoCapture(0)
 
+
+
 # Bestimmen der verschiedenen Regionen einer Farbe
 def regionErmitteln (index, countoursRange):
     minimumRange = min(countoursRange)
     maximumRange = max(countoursRange) + 1
 
     indexRange = list(range(minimumRange, maximumRange))
-    print(str(indexRange[index]) + " index")
+    #print(str(indexRange[index]) + " index")
     del indexRange[index]
 
-    print(indexRange)
+    #print(indexRange)
     return (indexRange)
+
+
 
 # Jedem Feld eine eindeutige Bezeichung zuordnen
 def feldNummer(maskeFarbe, contours):
@@ -48,8 +53,8 @@ def feldNummer(maskeFarbe, contours):
         else:
             cYRegion = int(M["m01"] / M["m00"])
             cv2.circle(median, (cXRegion, cYRegion), 5, (255, 0, 255), -1)
-        print("Y-Wert: " + str(cYRegion))
-        print("X-Wert: " + str(cXRegion))
+        #print("Y-Wert: " + str(cYRegion))
+        #print("X-Wert: " + str(cXRegion))
 
         colorStr = str(colorNumb) + "." + str(cYRegion) + "." + str(cXRegion)
         print(colorStr)
@@ -64,9 +69,37 @@ while cap.isOpened() and frameAuslesen == True:
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     h,s,v = cv2.split(hsv)
 
-    colorElemente = len(colorListe) / 3
+    colorElemente = len(colorListe)
+    #print(colorElemente)
 
-    
+    while colorListeIndex < colorElemente:
+
+        colorNumb = colorListe[colorListeIndex]
+        #print(colorListeIndex)
+        hueRange = cv2.inRange(h, colorListe[colorListeIndex] - 10, colorListe[colorListeIndex] + 10)
+        satRange = cv2.inRange(s, 50, 255)
+
+        maskeFarbe = cv2.multiply(hueRange,satRange)
+
+        ksize = 11
+        median = cv2.medianBlur(maskeFarbe, ksize)
+        cv2.imshow('Video_Masken', median)
+        
+
+        contours,hierarchy=cv2.findContours(median,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+
+        feldNummer(colorNumb, contours)
+
+        colorListeIndex += 3 
+
+        if cv2.waitKey(25) != -1:
+            break
+        time.sleep(1)
+
+
+        
+        
+
 
 
 
@@ -74,27 +107,27 @@ while cap.isOpened() and frameAuslesen == True:
 
 
        
-    hueRange = cv2.inRange(h, 155, 175)
-    satRange = cv2.inRange(s, 50, 255)
-    colorNumb = 100
+    #hueRange = cv2.inRange(h, 155, 175)
+    #satRange = cv2.inRange(s, 50, 255)
+    #colorNumb = 100
 
-    maskeFarbe = cv2.multiply(hueRange,satRange)
+    #maskeFarbe = cv2.multiply(hueRange,satRange)
 
         
     #cv2.imshow('Video_maske', maskeGruen)
 
 
     # Median zur Entferung von unerwünschten Bereichen
-    ksize = 21
-    median = cv2.medianBlur(maskeFarbe, ksize)
+    #ksize = 21
+    #median = cv2.medianBlur(maskeFarbe, ksize)
 
 
-    contours,hierarchy=cv2.findContours(median,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    #contours,hierarchy=cv2.findContours(median,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
 
 
     # Ausgabe des Strings
-    feldNummer(colorNumb, contours)
+    #feldNummer(colorNumb, contours)
     
 
     
@@ -106,8 +139,8 @@ while cap.isOpened() and frameAuslesen == True:
 
        
 
-    cv2.imshow('Video_median', median)
-    frameAuslesen = False
+    #cv2.imshow('Video_median', median)
+    #frameAuslesen = False
     
     # Textausgabe
     #cv2.putText(frame, "Y-Wert: " + str(cY), (cX - 0, cY - 25),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
@@ -132,8 +165,7 @@ while cap.isOpened() and frameAuslesen == True:
     # Bildausgabe
     #cv2.imshow('Video_Ergebnis', frame)
 
-    #if cv2.waitKey(25) != -1:
-    #    break
+    
 
 cap.release()
 cv2.destroyAllWindows()
