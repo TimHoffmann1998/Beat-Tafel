@@ -5,6 +5,7 @@ import time
 # Hilfsvariable
 frameAuslesen = True
 colorListeIndex = 0
+frameKalibierung = True
 
 # Liste mit allen Farben (Farbton, Sättigung, Hellwert)
 colorListe = [165,52,12, 0,75,39, 70,78,27, 104,74,23, 23,78,39]
@@ -58,6 +59,8 @@ def feldNummer(maskeFarbe, contours):
 
         colorStr = str(colorNumb) + "." + str(cYRegion) + "." + str(cXRegion)
         print(colorStr)
+
+
 
 # Hauptskript
 while cap.isOpened() and frameAuslesen == True:
