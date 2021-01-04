@@ -98,6 +98,10 @@ document.querySelector("#playButton").addEventListener("click", function(){
         }
 })
 
+document.querySelector("#switch").addEventListener("click", function(){
+    takt = taktb
+})
+
 if (navigator.requestMIDIAccess) {
     navigator.requestMIDIAccess({sysex: false}).then(function (midiAccess) {
         midi = midiAccess;
