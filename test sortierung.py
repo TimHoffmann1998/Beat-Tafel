@@ -1,8 +1,8 @@
 import numpy as np
 import cv2
 import time
-import rtmidi
-import mido
+#import rtmidi
+#import mido
 
 # Hilfsvariable
 frameAuslesen = True
@@ -78,16 +78,20 @@ def trackCode (Liste):
             feldData = feldCode.split(".")
 
             if feldData[0] == "0":
-                taktCode = [1,0,0,0]
+                #[1,0,0,0]
+                taktCode = 8
         
             elif feldData[0] == "23":
-                taktCode = [0,1,0,0]
+                #[0,1,0,0]
+                taktCode = 4
             
             elif feldData[0] == "70":
-                taktCode = [0,0,1,0]
+                #[0,0,1,0]
+                taktCode = 2
             
             elif feldData[0] == "104":
-                taktCode = [0,0,0,1]
+                #[0,0,0,1]
+                taktCode = 1
             else: 
                 None
 
@@ -222,7 +226,8 @@ def trackCode (Liste):
             i = i
             listeCount += 1
         else:
-            ausgabeListe[listeCount] = [0,0,0,0]
+            #[0,0,0,0]
+            ausgabeListe[listeCount] = 0
             listeCount += 1
              
             
@@ -275,17 +280,25 @@ while cap.isOpened() and frameAuslesen == True:
         time.sleep(1)
 
     if frameAuslesen == True:
+        #sendControlChange(feldNummerListe)
         print(feldNummerListe) 
     
     trackCode(feldNummerListe)
 
 
-    print("Midi output ports: ", mido.get_output_names())
-    midiOutput = mido.open_output("LoopBe Internal MIDI 2")
+    #print("Midi output ports: ", mido.get_output_names())
+    #midiOutput = mido.open_output("LoopBe Internal MIDI 2")
 
+    #def sendControlChange(control, value):
+        #message = mido.Message.from_bytes()
+       # midiOutput.send(message)
+
+
+
+    '''
     def sendControlChange(control, value):
         message = mido.Message('control_change', control=3, value=value)
-        midiOutput.send(message)
+        midiOutput.send(message)'''
     
 
 
