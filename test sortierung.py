@@ -1,8 +1,8 @@
 import numpy as np
 import cv2
 import time
-#import rtmidi
-#import mido
+import rtmidi
+import mido
 
 # Hilfsvariable
 frameAuslesen = True
@@ -11,6 +11,9 @@ colorListeIndex = 0
 taktCode = []
 feldNummerListe = []
 ausgabeListe = ["","","","","","","","","","","","","","","",""]
+
+print("Midi output ports: ", mido.get_output_names())
+midiOutput = mido.open_output("LoopBe Internal MIDI 2")
 
 
 # Liste mit allen Farben (Farbton, Sättigung, Hellwert)
@@ -22,7 +25,10 @@ cap = cv2.VideoCapture('beat_tafel.mp4')
 # Live-Video
 #cap = cv2.VideoCapture(0)
 
-
+def sendControlChange(x):
+    x = int(x)
+    message = mido.Message('control_change', control=3, value=x)
+    midiOutput.send(message)
 
 # Bestimmen der verschiedenen Regionen einer Farbe
 def regionErmitteln (index, countoursRange):
@@ -229,7 +235,10 @@ def trackCode (Liste):
             #[0,0,0,0]
             ausgabeListe[listeCount] = 0
             listeCount += 1
-             
+
+    for i in ausgabeListe:
+        print(i)
+        sendControlChange(i)         
             
 
     print(ausgabeListe)
@@ -262,7 +271,7 @@ while cap.isOpened() and frameAuslesen == True:
 
         ksize = 11
         median = cv2.medianBlur(maskeFarbe, ksize)
-        cv2.imshow('Video_Masken', median)
+        #cv2.imshow('Video_Masken', median)
         
 
         contours,hierarchy=cv2.findContours(median,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
@@ -277,103 +286,17 @@ while cap.isOpened() and frameAuslesen == True:
 
         if cv2.waitKey(25) != -1:
             break
-        time.sleep(1)
+        #time.sleep(1)
 
     if frameAuslesen == True:
-        #sendControlChange(feldNummerListe)
+        
         print(feldNummerListe) 
     
     trackCode(feldNummerListe)
-
-
-    #print("Midi output ports: ", mido.get_output_names())
-    #midiOutput = mido.open_output("LoopBe Internal MIDI 2")
-
-    #def sendControlChange(control, value):
-        #message = mido.Message.from_bytes()
-       # midiOutput.send(message)
-
-
-
-    '''
-    def sendControlChange(control, value):
-        message = mido.Message('control_change', control=3, value=value)
-        midiOutput.send(message)'''
-    
-
+  
 
     frameAuslesen = False
-
-
-        
-        
-
-
-
-
-
-
-
-       
-    #hueRange = cv2.inRange(h, 155, 175)
-    #satRange = cv2.inRange(s, 50, 255)
-    #colorNumb = 100
-
-    #maskeFarbe = cv2.multiply(hueRange,satRange)
-
-        
-    #cv2.imshow('Video_maske', maskeGruen)
-
-
-    # Median zur Entferung von unerwünschten Bereichen
-    #ksize = 21
-    #median = cv2.medianBlur(maskeFarbe, ksize)
-
-
-    #contours,hierarchy=cv2.findContours(median,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-
-
-
-    # Ausgabe des Strings
-    #feldNummer(colorNumb, contours)
-    
-
-    
-
-    
-
-
-
-
-       
-
-    #cv2.imshow('Video_median', median)
-    #frameAuslesen = False
-    
-    # Textausgabe
-    #cv2.putText(frame, "Y-Wert: " + str(cY), (cX - 0, cY - 25),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-    #cv2.putText(frame, "X-Wert: " + str(cX), (cX - 0, cY - 9),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-    #print("Y-Wert: " + str(cY))
-    #print("X-Wert: " + str(cX))
-
-
-    # Rechteck zu den Feldes
-    #x, y, w, h = cv2.boundingRect(median)
-    #cv2.rectangle (median, (x, y), (x + w, y + h), (52,26,77), 2)
-
-
-
-    #median_color = cv2.cvtColor(median, cv2.COLOR_GRAY2BGR)
-    #maske = cv2.multiply(median_color,frame)
-    #cv2.imshow('Video_multi', maske)
-
-
-
-
-    # Bildausgabe
-    #cv2.imshow('Video_Ergebnis', frame)
-
-   
+  
 
 cap.release()
 cv2.destroyAllWindows()

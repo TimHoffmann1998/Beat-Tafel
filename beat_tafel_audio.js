@@ -4,8 +4,10 @@ let bpm = 90;
 let achtel = (60/bpm)*4/8;
 
 var audioBuffers = [];
-var takt = [[0,1,0,1,0,1,0,1], [1,0,0,0,1,0,0,0], [0,0,1,0,0,0,1,0], [1,1,0,0,1,1,0,0]]
+var takt = [[1,1,1,1,1,1,1,1], [0,0,0,0,0,0,0,0], [1,1,1,1,1,1,1,1], [0,0,0,0,0,0,0,0]]
+//var takt = [[0,1,0,1,0,1,0,1], [1,0,0,0,1,0,0,0], [0,0,1,0,0,0,1,0], [1,1,0,0,1,1,0,0]]
 var taktb = [[1,0,0,0,1,0,0,0], [0,1,0,1,0,1,0,1], [1,1,0,0,1,1,0,0], [0,0,1,0,0,0,1,0]]
+var taktTest = []
 
 const bpmControl = document.querySelector('#bpm');
 bpmControl.addEventListener('input', function() {
@@ -117,5 +119,12 @@ if (navigator.requestMIDIAccess) {
 }
 
 function onMIDIMessage(event) {
+    document.querySelector("#test").innerHTML = event.data[2];
+    console.log(event.data[2]);
 
+    if (taktTest.length != 16){
+        taktTest.push(event.data[2]);
+    }
+        
+    document.querySelector("#test").innerHTML = taktTest;
 }
