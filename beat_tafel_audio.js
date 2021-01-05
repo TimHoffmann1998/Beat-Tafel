@@ -7,7 +7,7 @@ var audioBuffers = [];
 var takt = [[1,1,1,1,1,1,1,1], [0,0,0,0,0,0,0,0], [1,1,1,1,1,1,1,1], [0,0,0,0,0,0,0,0]]
 //var takt = [[0,1,0,1,0,1,0,1], [1,0,0,0,1,0,0,0], [0,0,1,0,0,0,1,0], [1,1,0,0,1,1,0,0]]
 var taktb = [[1,0,0,0,1,0,0,0], [0,1,0,1,0,1,0,1], [1,1,0,0,1,1,0,0], [0,0,1,0,0,0,1,0]]
-var taktTest = []
+var taktTest = [[],[],[],[]]
 
 const bpmControl = document.querySelector('#bpm');
 bpmControl.addEventListener('input', function() {
@@ -128,14 +128,35 @@ function dec2bin(dec){
     return bin
 }
 
+counter = 0
+
 function onMIDIMessage(event) {
     document.querySelector("#test").innerHTML = event.data[2];
-    console.log(event.data[2]);
+    //console.log(taktTest);
     
-
+    /*
     if (taktTest.length != 16){
         taktTest.push(dec2bin(event.data[2]));
     }
-        
-    document.querySelector("#test").innerHTML = taktTest;
+      */ 
+
+    if (counter <= 15){
+
+        for (i = 0; i < 4; i++){
+            taktTest[Math.floor(counter/4)].push(parseInt(dec2bin(event.data[2])[i], 10));
+        }
+
+    }
+    counter += 1;
+
+    if (counter == 15){
+        takt = taktTest;
+        taktTest = [[],[],[],[]]
+    }
+
+    if (counter == 31){
+        counter = 0;
+    }
+
+    document.querySelector("#test").innerHTML = takt;
 }
