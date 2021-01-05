@@ -21,7 +21,7 @@ midiOutput = mido.open_output("LoopBe Internal MIDI 2")
 colorListe = [165,52,12, 0,75,39, 70,78,27, 104,74,23, 23,78,39]
 
 # Einbindung des Videosignals
-cap = cv2.VideoCapture('beat_tafel.mp4')
+cap = cv2.VideoCapture('beat_tafel_testvideo.mp4')
 
 # Live-Video
 #cap = cv2.VideoCapture(0)
@@ -284,9 +284,7 @@ while cap.isOpened() and frameAuslesen == True:
         
         # Regionen finden
         contours,hierarchy=cv2.findContours(median,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-
         feldNummerListeFarbe = feldNummer(colorNumb, contours)
-
         feldNummerListe.append(feldNummerListeFarbe)
 
         # nachste Farbe bearbeiten
@@ -302,7 +300,7 @@ while cap.isOpened() and frameAuslesen == True:
     trackCode(feldNummerListe)
   
     # Auslesen des Frames nicht erneut durchführen
-    frameAuslesen = False
+    #frameAuslesen = False
   
 
 cap.release()
