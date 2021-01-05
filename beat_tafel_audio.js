@@ -118,12 +118,23 @@ if (navigator.requestMIDIAccess) {
     alert("No MIDI support in your browser.");
 }
 
+function dec2bin(dec){
+    bin = (dec >>> 0).toString(2);
+
+    while (bin.length < 4){
+        bin = 0 + bin 
+    }
+
+    return bin
+}
+
 function onMIDIMessage(event) {
     document.querySelector("#test").innerHTML = event.data[2];
     console.log(event.data[2]);
+    
 
     if (taktTest.length != 16){
-        taktTest.push(event.data[2]);
+        taktTest.push(dec2bin(event.data[2]));
     }
         
     document.querySelector("#test").innerHTML = taktTest;
