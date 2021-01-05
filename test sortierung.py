@@ -13,7 +13,7 @@ ausgabeListe = ["","","","","","","","","","","","","","","",""]
 
 # MIDI-Output suchen
 print("Midi output ports: ", mido.get_output_names())
-midiOutput = mido.open_output("LoopBe Internal MIDI 2")
+midiOutput = mido.open_output("LoopBe Internal MIDI 1")
 
 
 # Liste mit allen Farben (Farbton, Sättigung, Hellwert)
