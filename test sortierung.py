@@ -6,11 +6,12 @@ import mido
 
 # Hilfsvariable
 frameAuslesen = True
-colorListeIndex = 0
-taktCode = []
-feldNummerListe = []
-ausgabeListe = ["","","","","","","","","","","","","","","",""]
+#colorListeIndex = 0
+#taktCode = []
+#feldNummerListe = []
+#ausgabeListe = ["","","","","","","","","","","","","","","",""]
 midiMax = True
+count = 0
 
 # MIDI-Output suchen
 print("Midi output ports: ", mido.get_output_names())
@@ -123,20 +124,7 @@ def trackCode (Liste):
                 
                 elif colorDataX < 1500:
                     ausgabeListe[3] = taktCode
-            
-                '''
-                elif colorDataX < 1250:
-                    ausgabeListe[4] = colorCode
-                
-                elif colorDataX < 1500:
-                    ausgabeListe[5] = colorCode
-                
-                elif colorDataX < 1750:
-                    ausgabeListe[6] = colorCode
-            
-                elif colorDataX < 2000:
-                    ausgabeListe[7] = colorCode
-                '''        
+                 
 
                 # Track 2
             elif colorDataY < 500:
@@ -151,20 +139,7 @@ def trackCode (Liste):
                 
                 elif colorDataX < 1500:
                     ausgabeListe[7] = taktCode
-
-                '''
-                elif colorDataX < 1250:
-                    ausgabeListe[4] = colorCode
-
-                elif colorDataX < 1500:
-                    ausgabeListe[5] = colorCode
-
-                elif colorDataX < 1750:
-                    ausgabeListe[6] = colorCode
-            
-                elif colorDataX < 2000:
-                    ausgabeListe[7] = colorCode
-                '''        
+                      
 
                 # Track 3
             elif colorDataY < 650:
@@ -180,19 +155,7 @@ def trackCode (Liste):
                 elif colorDataX < 1500:
                     ausgabeListe[11] = taktCode
             
-                '''
-                elif colorDataX < 1250:
-                    ausgabeListe[4] = colorCode
-
-                elif colorDataX < 1500:
-                    ausgabeListe[5] = colorCode
                 
-                elif colorDataX < 1750:
-                    ausgabeListe[6] = colorCode
-            
-                elif colorDataX < 2000:
-                    ausgabeListe[7] = colorCode
-                '''    
         
                 # Track 4
             elif colorDataY < 800:
@@ -208,20 +171,7 @@ def trackCode (Liste):
                 elif colorDataX < 1500:
                     ausgabeListe[15] = taktCode
             
-                '''
-                elif colorDataX < 1250:
-                    ausgabeListe[4] = colorCode
-
-                elif colorDataX < 1500:
-                    ausgabeListe[5] = colorCode
-
-                elif colorDataX < 1750:
-                    ausgabeListe[6] = colorCode
-            
-                elif colorDataX < 2000:
-                    ausgabeListe[7] = colorCode
-                '''    
-
+                
     # leere Elemente mit 0en auffüllen
     listeCount = 0
     for i in ausgabeListe:
@@ -238,70 +188,82 @@ def trackCode (Liste):
     counter = 0
     for i in ausgabeListe:
         if counter < 16 and midiMax == True:
-            print(i)
-            print(counter)
+            #print(i)
+            #print(counter)
             sendControlChange(i)
             counter += 1
         else:
             None
-                 
-            
 
     print(ausgabeListe)
 
 
-
 # Hauptskript
-while cap.isOpened() and frameAuslesen == True:
-
-    # Einlesen der einzelnen Frames
+while cap.isOpened():
     ret, frame = cap.read()
-    
-    # Konvertieren von BGR zu HSV
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    h,s,v = cv2.split(hsv)
 
-    # Länge der Liste 
-    colorElemente = len(colorListe)
+    if frameAuslesen == True:
 
-    # Nach jeder einzelenen Farbe suchen
-    while colorListeIndex < colorElemente:
+        colorListeIndex = 0
+        taktCode = []
+        feldNummerListe = []
+        ausgabeListe = ["","","","","","","","","","","","","","","",""]
+
+        # Einlesen der einzelnen Frames
+        #ret, frame = cap.read()
         
-        # Liste in 3er Schritten abrufen
-        colorNumb = colorListe[colorListeIndex]
+        # Konvertieren von BGR zu HSV
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        h,s,v = cv2.split(hsv)
 
-        # Nach Farbe suchen
-        hueRange = cv2.inRange(h, colorListe[colorListeIndex] - 10, colorListe[colorListeIndex] + 10)
-        satRange = cv2.inRange(s, 50, 255)
+        # Länge der Liste 
+        colorElemente = len(colorListe)
 
-        # Masken multiplizieren
-        maskeFarbe = cv2.multiply(hueRange,satRange)
+        # Nach jeder einzelenen Farbe suchen
+        while colorListeIndex < colorElemente:
+            
+            # Liste in 3er Schritten abrufen
+            colorNumb = colorListe[colorListeIndex]
 
-        # Median bilden
-        ksize = 11
-        median = cv2.medianBlur(maskeFarbe, ksize)
-        cv2.imshow('Video_Masken', median)
-        
-        # Regionen finden
-        contours,hierarchy=cv2.findContours(median,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-        feldNummerListeFarbe = feldNummer(colorNumb, contours)
-        feldNummerListe.append(feldNummerListeFarbe)
+            # Nach Farbe suchen
+            hueRange = cv2.inRange(h, colorListe[colorListeIndex] - 10, colorListe[colorListeIndex] + 10)
+            satRange = cv2.inRange(s, 50, 255)
 
-        # nachste Farbe bearbeiten
-        colorListeIndex += 3 
+            # Masken multiplizieren
+            maskeFarbe = cv2.multiply(hueRange,satRange)
 
-        if cv2.waitKey(25) != -1:
-            break
-        time.sleep(1)
+            # Median bilden
+            ksize = 11
+            median = cv2.medianBlur(maskeFarbe, ksize)
+            cv2.imshow('Video_Masken', median)
+            
+            # Regionen finden
+            contours,hierarchy=cv2.findContours(median,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+            feldNummerListeFarbe = feldNummer(colorNumb, contours)
+            feldNummerListe.append(feldNummerListeFarbe)
 
-    print(feldNummerListe) 
+            # nachste Farbe bearbeiten
+            colorListeIndex += 3 
 
+            if cv2.waitKey(25) != -1:
+                break
+            #time.sleep(1)
 
-    trackCode(feldNummerListe)
-  
-    # Auslesen des Frames nicht erneut durchführen
-    #frameAuslesen = False
-  
+        print(feldNummerListe) 
+
+        trackCode(feldNummerListe)
+        frameAuslesen = False
+
+    else:
+        None
+
+    if frameAuslesen == False:
+        if count < cap.get(cv2.CAP_PROP_FPS):
+            count += 1
+            frameAuslesen = False
+        else: 
+            frameAuslesen = True
+            count = 0   
 
 cap.release()
 cv2.destroyAllWindows()
