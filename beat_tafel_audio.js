@@ -131,6 +131,7 @@ function dec2bin(dec){
 function onMIDIMessage(event) {
     document.querySelector("#test").innerHTML = event.data[2];
     console.log(event.data[2]);
+    print(event.data[2])
     
 
     if (taktTest.length != 16){

@@ -10,10 +10,11 @@ colorListeIndex = 0
 taktCode = []
 feldNummerListe = []
 ausgabeListe = ["","","","","","","","","","","","","","","",""]
+midiMax = True
 
 # MIDI-Output suchen
 print("Midi output ports: ", mido.get_output_names())
-midiOutput = mido.open_output("LoopBe Internal MIDI 1")
+midiOutput = mido.open_output("LoopBe Internal MIDI 2")
 
 
 # Liste mit allen Farben (Farbton, Sättigung, Hellwert)
@@ -234,9 +235,16 @@ def trackCode (Liste):
             listeCount += 1
 
     # Jedes Elemente der sortierten Liste in 
+    counter = 0
     for i in ausgabeListe:
-        print(i)
-        sendControlChange(i)         
+        if counter < 16 and midiMax == True:
+            print(i)
+            print(counter)
+            sendControlChange(i)
+            counter += 1
+        else:
+            None
+                 
             
 
     print(ausgabeListe)
@@ -288,11 +296,9 @@ while cap.isOpened() and frameAuslesen == True:
             break
         time.sleep(1)
 
+    print(feldNummerListe) 
 
-    if frameAuslesen == True:
-        
-        print(feldNummerListe) 
-    
+
     trackCode(feldNummerListe)
   
     # Auslesen des Frames nicht erneut durchführen
