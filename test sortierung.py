@@ -7,13 +7,14 @@ import mido
 # Hilfsvariable
 frameAuslesen = True
 colorListeIndex = 0
-#frameKalibierung = True
 taktCode = []
 feldNummerListe = []
 ausgabeListe = ["","","","","","","","","","","","","","","",""]
+midiMax = True
 
+# MIDI-Output suchen
 print("Midi output ports: ", mido.get_output_names())
-midiOutput = mido.open_output("LoopBe Internal MIDI 1")
+midiOutput = mido.open_output("LoopBe Internal MIDI 2")
 
 
 # Liste mit allen Farben (Farbton, Sättigung, Hellwert)
@@ -25,10 +26,12 @@ cap = cv2.VideoCapture('beat_tafel.mp4')
 # Live-Video
 #cap = cv2.VideoCapture(0)
 
+# Senden der Infomationen über MIDI
 def sendControlChange(x):
     x = int(x)
     message = mido.Message('control_change', control=3, value=x)
     midiOutput.send(message)
+
 
 # Bestimmen der verschiedenen Regionen einer Farbe
 def regionErmitteln (index, countoursRange):
@@ -36,12 +39,9 @@ def regionErmitteln (index, countoursRange):
     maximumRange = max(countoursRange) + 1
 
     indexRange = list(range(minimumRange, maximumRange))
-    #print(str(indexRange[index]) + " index")
     del indexRange[index]
 
-    #print(indexRange)
     return (indexRange)
-
 
 
 # Jedem Feld eine eindeutige Bezeichung zuordnen
@@ -66,17 +66,14 @@ def feldNummer(maskeFarbe, contours):
         else:
             cYRegion = int(M["m01"] / M["m00"])
             cv2.circle(median, (cXRegion, cYRegion), 5, (255, 0, 255), -1)
-        #print("Y-Wert: " + str(cYRegion))
-        #print("X-Wert: " + str(cXRegion))
 
         colorStr = str(colorNumb) + "." + str(cYRegion) + "." + str(cXRegion)
-        #print(colorStr)
         colorStrListe.append(colorStr)
 
     return(colorStrListe)
 
 
-
+# Einsotiernen der Farbfelder in die richtige Position
 def trackCode (Liste):
     for i in Liste:
         for feldCode in i:
@@ -225,6 +222,7 @@ def trackCode (Liste):
                     ausgabeListe[7] = colorCode
                 '''    
 
+    # leere Elemente mit 0en auffüllen
     listeCount = 0
     for i in ausgabeListe:
         
@@ -236,14 +234,20 @@ def trackCode (Liste):
             ausgabeListe[listeCount] = 0
             listeCount += 1
 
+    # Jedes Elemente der sortierten Liste in 
+    counter = 0
     for i in ausgabeListe:
-        print(i)
-        sendControlChange(i)         
+        if counter < 16 and midiMax == True:
+            print(i)
+            print(counter)
+            sendControlChange(i)
+            counter += 1
+        else:
+            None
+                 
             
 
     print(ausgabeListe)
-
-
 
 
 
@@ -257,44 +261,47 @@ while cap.isOpened() and frameAuslesen == True:
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     h,s,v = cv2.split(hsv)
 
+    # Länge der Liste 
     colorElemente = len(colorListe)
-    #print(colorElemente)
 
+    # Nach jeder einzelenen Farbe suchen
     while colorListeIndex < colorElemente:
-
+        
+        # Liste in 3er Schritten abrufen
         colorNumb = colorListe[colorListeIndex]
-        #print(colorListeIndex)
+
+        # Nach Farbe suchen
         hueRange = cv2.inRange(h, colorListe[colorListeIndex] - 10, colorListe[colorListeIndex] + 10)
         satRange = cv2.inRange(s, 50, 255)
 
+        # Masken multiplizieren
         maskeFarbe = cv2.multiply(hueRange,satRange)
 
+        # Median bilden
         ksize = 11
         median = cv2.medianBlur(maskeFarbe, ksize)
-        #cv2.imshow('Video_Masken', median)
+        cv2.imshow('Video_Masken', median)
         
-
+        # Regionen finden
         contours,hierarchy=cv2.findContours(median,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
         feldNummerListeFarbe = feldNummer(colorNumb, contours)
-        
-        #print(feldNummerListeFarbe)
 
         feldNummerListe.append(feldNummerListeFarbe)
 
+        # nachste Farbe bearbeiten
         colorListeIndex += 3 
 
         if cv2.waitKey(25) != -1:
             break
-        #time.sleep(1)
+        time.sleep(1)
 
-    if frameAuslesen == True:
-        
-        print(feldNummerListe) 
-    
+    print(feldNummerListe) 
+
+
     trackCode(feldNummerListe)
   
-
+    # Auslesen des Frames nicht erneut durchführen
     frameAuslesen = False
   
 
