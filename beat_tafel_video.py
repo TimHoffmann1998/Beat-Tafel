@@ -15,7 +15,7 @@ count = 0
 
 # MIDI-Output suchen
 print("Midi output ports: ", mido.get_output_names())
-midiOutput = mido.open_output("LoopBe Internal MIDI 2")
+midiOutput = mido.open_output("LoopBe Internal MIDI 1")
 
 
 # Liste mit allen Farben (Farbton, Sättigung, Hellwert)
@@ -73,6 +73,18 @@ def feldNummer(maskeFarbe, contours):
 
     return(colorStrListe)
 
+def sortierung (taktCode, xWerteDifferenz, colorDataX, track):
+    if colorDataX < xWerteDifferenz + xWerte[0]:
+        ausgabeListe[(track * 4) + 0] = taktCode
+                    
+    elif colorDataX < xWerteDifferenz*2 + xWerte[0]:
+        ausgabeListe[(track * 4) + 1] = taktCode
+                    
+    elif colorDataX < xWerteDifferenz*3 + xWerte[0]:
+        ausgabeListe[(track * 4) + 2] = taktCode
+                        
+    elif colorDataX < xWerteDifferenz*4 + xWerte[0]:
+        ausgabeListe[(track * 4) + 3] = taktCode
 
 # Einsotiernen der Farbfelder in die richtige Position
 def trackCode (Liste):
@@ -81,97 +93,67 @@ def trackCode (Liste):
             taktCode = []    
             feldData = feldCode.split(".")
 
-            if feldData[0] == "0":
-                #[1,0,0,0]
-                taktCode = 8
-        
-            elif feldData[0] == "23":
-                #[0,1,0,0]
-                taktCode = 4
-            
-            elif feldData[0] == "70":
-                #[0,0,1,0]
-                taktCode = 2
-            
-            elif feldData[0] == "104":
-                #[0,0,0,1]
-                taktCode = 1
-            else: 
-                None
+            if feldData[0] != "165":
 
-            '''
-            #elif feldData[0] == "165":
-            #    taktCode = [1,0,1,0]
-
-            #elif feldData[0] == "230":
-            #    taktCode = [1,1,1,1]
-            '''
-
-            colorDataY = int(feldData[1])
-            colorDataX = int(feldData[2])
-        
-            # Track 1
-
-            if colorDataY < 350:
-                if colorDataX < 600:
-                    ausgabeListe[0] = taktCode
+                if feldData[0] == "0":
+                    #[1,0,0,0]
+                    taktCode = 8
             
-                elif colorDataX < 900:
-                    ausgabeListe[1] = taktCode
-            
-                elif colorDataX < 1200:
-                    ausgabeListe[2] = taktCode
+                elif feldData[0] == "23":
+                    #[0,1,0,0]
+                    taktCode = 4
                 
-                elif colorDataX < 1500:
-                    ausgabeListe[3] = taktCode
-                 
-
-                # Track 2
-            elif colorDataY < 500:
-                if colorDataX < 600:
-                    ausgabeListe[4] = taktCode
-            
-                elif colorDataX < 900:
-                    ausgabeListe[5] = taktCode
-
-                elif colorDataX < 1200:
-                    ausgabeListe[6] = taktCode
+                elif feldData[0] == "70":
+                    #[0,0,1,0]
+                    taktCode = 2
                 
-                elif colorDataX < 1500:
-                    ausgabeListe[7] = taktCode
-                      
+                elif feldData[0] == "104":
+                    #[0,0,0,1]
+                    taktCode = 1
+               #''' else: 
+                #    None'''
 
-                # Track 3
-            elif colorDataY < 650:
-                if colorDataX < 600:
-                    ausgabeListe[8] = taktCode
+                '''
+                #elif feldData[0] == "165":
+                #    taktCode = [1,0,1,0]
 
-                elif colorDataX < 900:
-                    ausgabeListe[9] = taktCode
-            
-                elif colorDataX < 1200:
-                    ausgabeListe[10] = taktCode
-                
-                elif colorDataX < 1500:
-                    ausgabeListe[11] = taktCode
-            
-                
-        
-                # Track 4
-            elif colorDataY < 800:
-                if colorDataX < 600:
-                    ausgabeListe[12] = taktCode
+                #elif feldData[0] == "230":
+                #    taktCode = [1,1,1,1]
+                '''
 
-                elif colorDataX < 900:
-                    ausgabeListe[13] = taktCode
+                colorDataY = int(feldData[1])
+                colorDataX = int(feldData[2])
             
-                elif colorDataX < 1200:
-                    ausgabeListe[14] = taktCode
+                    # Track 1
+                if colorDataY < yWerteDifferenz + yWerte[0]:
+                    sortierung(taktCode, xWerteDifferenz, colorDataX, 0)  
+              
+                    # Track 2
+                elif colorDataY < yWerteDifferenz*2 + yWerte[0]:
+                    sortierung(taktCode, xWerteDifferenz, colorDataX, 1)
+                        
+                    # Track 3
+                elif colorDataY < yWerteDifferenz*3 + yWerte[0]:
+                    sortierung(taktCode, xWerteDifferenz, colorDataX, 2)
                 
-                elif colorDataX < 1500:
-                    ausgabeListe[15] = taktCode
+                    # Track 4
+                elif colorDataY < yWerteDifferenz*4 + yWerte[0]:
+                    sortierung(taktCode, xWerteDifferenz, colorDataX, 3)
             
+            elif feldData[0] == "165":
                 
+                yWerte.append(int(feldData[1]))
+                xWerte.append(int(feldData[2]))
+
+                yWerte.sort()
+                xWerte.sort()
+
+                yWerteDifferenz = ((max(yWerte) - min(yWerte)) / 4)
+                xWerteDifferenz = ((max(xWerte) - min(xWerte)) / 4)
+                yWerteVerschiebung = yWerte[0]
+                xWerteVerschiebung = xWerte[0]
+
+
     # leere Elemente mit 0en auffüllen
     listeCount = 0
     for i in ausgabeListe:
@@ -186,16 +168,22 @@ def trackCode (Liste):
 
     # Jedes Elemente der sortierten Liste in 
     counter = 0
-    for i in ausgabeListe:
+    for index in ausgabeListe:
         if counter < 16 and midiMax == True:
             #print(i)
             #print(counter)
-            sendControlChange(i)
+            sendControlChange(index)
             counter += 1
         else:
             None
 
     print(ausgabeListe)
+
+
+'''def kalibrierung(Liste):
+    for feldCode in Liste:
+        feldData = feldCode.split(".")'''
+
 
 
 # Hauptskript
@@ -208,6 +196,8 @@ while cap.isOpened():
         taktCode = []
         feldNummerListe = []
         ausgabeListe = ["","","","","","","","","","","","","","","",""]
+        yWerte = []
+        xWerte = []
 
         # Einlesen der einzelnen Frames
         #ret, frame = cap.read()
@@ -264,6 +254,8 @@ while cap.isOpened():
         else: 
             frameAuslesen = True
             count = 0   
+    frameAuslesen = False
+    break
 
 cap.release()
 cv2.destroyAllWindows()
