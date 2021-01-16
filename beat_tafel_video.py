@@ -196,7 +196,7 @@ while cap.isOpened():
         yWerte = []
         xWerte = []
 
-        # An JS: nues Frame
+        # An JS: neues Frame
         sendControlChange(127)
 
         # Einlesen der einzelnen Frames

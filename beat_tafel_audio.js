@@ -143,6 +143,7 @@ function onMIDIMessage(event) {
 
     if (counter == 16){
         takt = taktpreload;
+        console.log(takt)
         taktpreload = [[],[],[],[]]
     };
 };
