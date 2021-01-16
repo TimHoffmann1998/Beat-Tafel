@@ -5,8 +5,8 @@ import rtmidi
 import mido
 
 # Hilfsvariable
-frameAuslesen = False
-colorListeIndex = 0
+frameAuslesen = True
+#colorListeIndex = 0
 #taktCode = []
 #feldNummerListe = []
 #ausgabeListe = ["","","","","","","","","","","","","","","",""]
@@ -19,19 +19,17 @@ midiOutput = mido.open_output("LoopBe Internal MIDI 1")
 
 
 # Liste mit allen Farben (Farbton, Sättigung, Hellwert)
-colorListe = [107,90,90, 170,90,90, 95,90,90, 20,90,90, 62,90,90]#, 104,90,90, 130,90,90]
+colorListe = [165,52,12, 0,75,39, 70,78,27, 104,74,23, 23,78,39]
 
 # Einbindung des Videosignals
-#cap = cv2.VideoCapture('beat_tafel_testvideo.mp4')
+cap = cv2.VideoCapture('beat_tafel_testvideo.mp4')
 
 # Live-Video
-cap = cv2.VideoCapture(0)
-#cap=cv2.VideoCapture(0, cv2.CAP_DSHOW)
+#cap = cv2.VideoCapture(0)
 
 # Senden der Infomationen über MIDI
 def sendControlChange(x):
     x = int(x)
-    print(x)
     message = mido.Message('control_change', control=3, value=x)
     midiOutput.send(message)
 
@@ -95,28 +93,33 @@ def trackCode (Liste):
             taktCode = []    
             feldData = feldCode.split(".")
 
-            if feldData[0] != "107":
+            if feldData[0] != "165":
 
-                if feldData[0] == "170":
+                if feldData[0] == "0":
                     #[1,0,0,0]
                     taktCode = 8
             
-                elif feldData[0] == "95":
-                    #[1,0,1,0]
-                    taktCode = 10
-                
-                elif feldData[0] == "20":
+                elif feldData[0] == "23":
                     #[0,1,0,0]
                     taktCode = 4
                 
-                elif feldData[0] == "62":
+                elif feldData[0] == "70":
+                    #[0,0,1,0]
+                    taktCode = 2
+                
+                elif feldData[0] == "104":
                     #[0,0,0,1]
                     taktCode = 1
+               #''' else: 
+                #    None'''
+
                 '''
-                elif feldData[0] == "130":
-                    #[1,1,1,1]
-                    taktCode = 15'''
-                                    
+                #elif feldData[0] == "165":
+                #    taktCode = [1,0,1,0]
+
+                #elif feldData[0] == "230":
+                #    taktCode = [1,1,1,1]
+                '''
 
                 colorDataY = int(feldData[1])
                 colorDataX = int(feldData[2])
@@ -137,7 +140,7 @@ def trackCode (Liste):
                 elif colorDataY < yWerteDifferenz*4 + yWerte[0]:
                     sortierung(taktCode, xWerteDifferenz, colorDataX, 3)
             
-            elif feldData[0] == "107":
+            elif feldData[0] == "165":
                 
                 yWerte.append(int(feldData[1]))
                 xWerte.append(int(feldData[2]))
@@ -188,7 +191,7 @@ while cap.isOpened():
     ret, frame = cap.read()
 
     if frameAuslesen == True:
-        print("test")
+
         colorListeIndex = 0
         taktCode = []
         feldNummerListe = []
@@ -213,23 +216,17 @@ while cap.isOpened():
         while colorListeIndex < colorElemente:
             
             # Liste in 3er Schritten abrufen
-            colorNumb = (colorListe[colorListeIndex])
+            colorNumb = colorListe[colorListeIndex]
 
             # Nach Farbe suchen
             hueRange = cv2.inRange(h, colorListe[colorListeIndex] - 10, colorListe[colorListeIndex] + 10)
-            satRange = cv2.inRange(s, 40, 255)
-            valRange = cv2.inRange(v, 25, 255)
-            
-
+            satRange = cv2.inRange(s, 50, 255)
 
             # Masken multiplizieren
-            #maskeFarbe = cv2.multiply(hueRange,satRange)
-            maskeFarbe = hueRange*satRange*valRange
-            #cv2.imshow('Video', maskeFarbe)
+            maskeFarbe = cv2.multiply(hueRange,satRange)
 
             # Median bilden
             ksize = 11
-
             median = cv2.medianBlur(maskeFarbe, ksize)
             cv2.imshow('Video_Masken', median)
             
@@ -241,11 +238,8 @@ while cap.isOpened():
             # nachste Farbe bearbeiten
             colorListeIndex += 3 
 
-            #cv2.imshow('Video', frame)
-
-            if cv2.waitKey(30) != -1:
+            if cv2.waitKey(25) != -1:
                 break
-            
             #time.sleep(1)
 
         print(feldNummerListe) 
@@ -263,8 +257,8 @@ while cap.isOpened():
         else: 
             frameAuslesen = True
             count = 0   
-    #frameAuslesen = False
-    #break
+    frameAuslesen = False
+    break
 
 cap.release()
 cv2.destroyAllWindows()
