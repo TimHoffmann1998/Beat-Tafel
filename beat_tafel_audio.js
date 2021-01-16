@@ -4,7 +4,7 @@ let bpm = 90;
 let achtel = (60/bpm)*4/8;
 
 var audioBuffers = [];
-var takt = [[1,1,1,1,1,1,1,1], [0,0,0,0,0,0,0,0], [1,1,1,1,1,1,1,1], [0,0,0,0,0,0,0,0]]
+var takt = [[0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0]]
 var taktpreload = [[],[],[],[]]
 
 const bpmControl = document.querySelector('#bpm');
@@ -130,8 +130,10 @@ counter = 0
 
 function onMIDIMessage(event) {
     document.querySelector("#test").innerHTML = event.data[2];
-    
-    if (counter <= 15){
+    if (event.data[2] == 127){
+        counter = 0;      
+    }
+    if (counter <= 15 and not event.data[2] == 127){
         for (i = 0; i < 4; i++){
             taktpreload[Math.floor(counter/4)].push(parseInt(dec2bin(event.data[2])[i], 10));
         }
@@ -142,9 +144,5 @@ function onMIDIMessage(event) {
     if (counter == 15){
         takt = taktpreload;
         taktpreload = [[],[],[],[]]
-    }
-
-    if (counter == 20){
-        counter = 0;
     }
 }
