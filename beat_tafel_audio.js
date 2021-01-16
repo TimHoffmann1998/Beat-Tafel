@@ -132,17 +132,17 @@ function onMIDIMessage(event) {
     document.querySelector("#test").innerHTML = event.data[2];
     if (event.data[2] == 127){
         counter = 0;      
-    }
-    if (counter <= 15 and not event.data[2] == 127){
+    };
+    if (counter <= 15 && event.data[2] != 127) {
         for (i = 0; i < 4; i++){
             taktpreload[Math.floor(counter/4)].push(parseInt(dec2bin(event.data[2])[i], 10));
-        }
-    }
+        };
+    };
 
     counter += 1;
 
-    if (counter == 15){
+    if (counter == 16){
         takt = taktpreload;
         taktpreload = [[],[],[],[]]
-    }
-}
+    };
+};
