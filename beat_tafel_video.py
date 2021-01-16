@@ -196,6 +196,9 @@ while cap.isOpened():
         yWerte = []
         xWerte = []
 
+        # An JS: neues Frame
+        sendControlChange(127)
+
         # Einlesen der einzelnen Frames
         #ret, frame = cap.read()
         
