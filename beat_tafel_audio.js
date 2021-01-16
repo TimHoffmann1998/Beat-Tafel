@@ -118,11 +118,11 @@ if (navigator.requestMIDIAccess) {
 
 function dec2bin(dec){
     bin = (dec >>> 0).toString(2);
-
+    ///console.log(bin)
     while (bin.length < 4){
         bin = 0 + bin 
     }
-
+    ///console.log(bin)
     return bin
 }
 
@@ -144,7 +144,7 @@ function onMIDIMessage(event) {
         taktpreload = [[],[],[],[]]
     }
 
-    if (counter == 31){
+    if (counter == 20){
         counter = 0;
     }
 }
