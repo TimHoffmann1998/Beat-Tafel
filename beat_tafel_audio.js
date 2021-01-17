@@ -21,7 +21,7 @@ let nextNoteTime = 0.0; // when the next note is due.
 
 for (let i = 0; i < 3; i++){
     getAudioData(i);
-=}
+} 
 
 function getAudioData(i) {
     fetch("DRUMS/hiphop/hiphop" + (i + 1) + ".wav")
