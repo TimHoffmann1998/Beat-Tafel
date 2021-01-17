@@ -15,7 +15,7 @@ count = 0
 
 # MIDI-Output suchen
 print("Midi output ports: ", mido.get_output_names())
-midiOutput = mido.open_output("LoopBe Internal MIDI 2")
+midiOutput = mido.open_output("LoopBe Internal MIDI 1")
 
 
 # Liste mit allen Farben (Farbton, Sättigung, Hellwert)
@@ -23,6 +23,7 @@ colorListe = [165,52,12, 0,75,39, 70,78,27, 104,74,23, 23,78,39]
 
 # Einbindung des Videosignals
 cap = cv2.VideoCapture('beat_tafel_testvideo.mp4')
+
 
 # Live-Video
 #cap = cv2.VideoCapture(0)

@@ -19,9 +19,9 @@ let currentNote = 0;
 let nextNoteTime = 0.0; // when the next note is due.
 
 
-for (let i = 0; i < 3; i++)
+for (let i = 0; i < 3; i++){
     getAudioData(i);
-
+=}
 
 function getAudioData(i) {
     fetch("DRUMS/hiphop/hiphop" + (i + 1) + ".wav")
@@ -137,9 +137,10 @@ function onMIDIMessage(event) {
         for (i = 0; i < 4; i++){
             taktpreload[Math.floor(counter/4)].push(parseInt(dec2bin(event.data[2])[i], 10));
         };
+        counter += 1;
     };
 
-    counter += 1;
+    
 
     if (counter == 16){
         takt = taktpreload;
