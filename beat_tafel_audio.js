@@ -19,9 +19,6 @@ let currentNote = 0;
 let nextNoteTime = 0.0; // when the next note is due.
 
 
-for (let i = 0; i < 3; i++){
-    getAudioData(i);
-} 
 
 function getAudioData(i) {
     fetch("DRUMS/hiphop/hiphop" + (i + 1) + ".wav")
@@ -31,6 +28,10 @@ function getAudioData(i) {
         audioBuffers[i] = audioBuffer;
     })
     .catch(console.error);
+}
+
+for (let i = 0; i <= 3; i++){
+    getAudioData(i);
 }
 
 function playSound(buffer, time) {
@@ -60,18 +61,19 @@ function scheduleNote(beatNumber, time) {
     notesInQueue.push({ note: beatNumber, time: time });
 
     if (takt[0][currentNote] === 1) {
-        playSound(audioBuffers[0], time)
-    }
+        playSound(audioBuffers[0], time);
+    };
     if (takt[1][currentNote] === 1) {
-        playSound(audioBuffers[1], time)
-    }
+        playSound(audioBuffers[1], time);
+    };
     if (takt[2][currentNote] === 1) {
-        playSound(audioBuffers[2], time)
-    }
+        playSound(audioBuffers[2], time);
+    };
     if (takt[3][currentNote] === 1) {
-        playSound(audioBuffers[3], time)
-    }
-}
+        console.log("takt4");
+        playSound(audioBuffers[3], time);
+    };
+};
 
 function scheduler() {
     // while there are notes that will need to play before the next interval, schedule them and advance the pointer.
@@ -144,7 +146,7 @@ function onMIDIMessage(event) {
 
     if (counter == 16){
         takt = taktpreload;
-        console.log(takt)
-        taktpreload = [[],[],[],[]]
+        console.log(takt);
+        taktpreload = [[],[],[],[]];
     };
 };
