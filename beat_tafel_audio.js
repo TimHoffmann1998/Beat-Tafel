@@ -19,12 +19,12 @@ let currentNote = 0;
 let nextNoteTime = 0.0; // when the next note is due.
 
 
-for (let i = 0; i <= 3; i++)
+for (let i = 0; i <= 3; i++){
     getAudioData(i);
+}
 
-
-function getAudioData(i) {
-    fetch("DRUMS/hiphop/hiphop" + (i + 1) + ".wav")
+function getAudioData(i, drumtype) {
+    fetch("DRUMS/hiphop/"+ drumtype + (i + 1) + ".wav")
     .then(response => response.arrayBuffer())
     .then(undecodedAudio => context.decodeAudioData(undecodedAudio))
     .then(audioBuffer => {
@@ -32,6 +32,12 @@ function getAudioData(i) {
     })
     .catch(console.error);
 }
+
+document.querySelector('#drumtype').addEventListener('click', function(){
+    for (let i = 0; i <= 3; i++){
+        getAudioData(i, this.value);
+    }
+})
 
 function playSound(buffer, time) {
     let source = context.createBufferSource();
