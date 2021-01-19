@@ -1,4 +1,7 @@
 let context = new AudioContext();
+let gainNode = context.createGain();
+gainNode.gain.value = 0.5;
+gainNode.connect(context.destination);
 
 let bpm = 90;
 let achtel = (60/bpm)*4/8;
@@ -7,24 +10,35 @@ var audioBuffers = [];
 var takt = [[0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0]]
 var taktpreload = [[],[],[],[]]
 
-const bpmControl = document.querySelector('#bpm');
-bpmControl.addEventListener('input', function() {
-    bpm = Number(this.value);
-}, false);
-
 let lookahead = 25.0; // How frequently to call scheduling function (in milliseconds)
 let scheduleAheadTime = 0.1; // How far ahead to schedule audio (sec)
 
 let currentNote = 0;
 let nextNoteTime = 0.0; // when the next note is due.
 
+const gainSlider = document.querySelector('#gainSlider');
+const gainOutput = document.querySelector('#gainOutput');
+const bpmSlider = document.querySelector('#bpmSlider');
+const bpmOutput = document.querySelector('#bpmOutput');
+bpmOutput.innerHTML = bpmSlider.value;
+gainOutput.innerHTML = gainSlider.value;
+
+bpmSlider.addEventListener('input', function() {
+    bpm = Number(this.value);
+    bpmOutput.innerHTML = bpm;
+}, false);
+
+gainSlider.addEventListener('input', function() {
+    gainNode.gain.value = Number(this.value);
+    gainOutput.innerHTML = gain;
+}, false);
 
 for (let i = 0; i <= 3; i++){
-    getAudioData(i);
+    getAudioData(i, document.querySelector('#drumtype').value);
 }
 
 function getAudioData(i, drumtype) {
-    fetch("DRUMS/hiphop/"+ drumtype + (i + 1) + ".wav")
+    fetch("DRUMS/" + drumtype + "/" + drumtype + (i + 1) + ".wav")
     .then(response => response.arrayBuffer())
     .then(undecodedAudio => context.decodeAudioData(undecodedAudio))
     .then(audioBuffer => {
@@ -42,7 +56,7 @@ document.querySelector('#drumtype').addEventListener('click', function(){
 function playSound(buffer, time) {
     let source = context.createBufferSource();
     source.buffer = buffer;
-    source.connect(context.destination);
+    source.connect(gainNode);
     source.start(time);
 }
 
@@ -104,9 +118,6 @@ document.querySelector("#playButton").addEventListener("click", function(){
         }
 })
 
-document.querySelector("#switch").addEventListener("click", function(){
-    takt = taktb
-})
 
 if (navigator.requestMIDIAccess) {
     navigator.requestMIDIAccess({sysex: false}).then(function (midiAccess) {
