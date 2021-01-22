@@ -5,6 +5,7 @@ gainNode.connect(context.destination);
 
 let bpm = 90;
 let achtel = (60/bpm)*4/8;
+let gain = 0;
 
 var audioBuffers = [];
 var takt = [[0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0]]
@@ -25,12 +26,12 @@ gainOutput.innerHTML = gainSlider.value;
 
 bpmSlider.addEventListener('input', function() {
     bpm = Number(this.value);
-    bpmOutput.innerHTML = bpm;
+    bpmOutput.innerHTML = bpm + " bpm";
 }, false);
 
 gainSlider.addEventListener('input', function() {
-    gainNode.gain.value = Number(this.value);
-    gainOutput.innerHTML = gain;
+    gain = Number(this.value);
+    document.querySelector("#gainOutput").innerHTML = (this.value) + " dB";
 }, false);
 
 for (let i = 0; i <= 3; i++){
@@ -110,11 +111,13 @@ document.querySelector("#playButton").addEventListener("click", function(){
         if (isPlaying){
             this.innerHTML = "Stop";
             currentNote = 0;
+            document.getElementById('playButton').style.backgroundImage = 'url(stopbutton.png)';
             nextNoteTime = context.currentTime;
             scheduler(); // kick off scheduling
         }    
         else{
             this.innerHTML = "Play";
+            document.getElementById('playButton').style.backgroundImage = 'url(playbutton.png)';
         }
 })
 

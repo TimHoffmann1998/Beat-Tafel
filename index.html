@@ -6,26 +6,84 @@
         <title>Beat_Tafel</title>
     </head>
     <body>
-
         <div id="videoFeed"></div>
+        <br>
         <button id="playButton">Play</button>
+        <br>
+        <br>
+        <div>Select type of drums here:</div>
+        <br>
         <select name="drumtype" id="drumtype">
             <option value="hiphop">hiphop</option>
             <option value="beatbox">beatbox</option>
             <option value="natural">natural</option>
           </select>
+        <br>
+        <br>
+
+        <div id=zeitstrahl>
+            <span id=zeit1 class="b"></span>
+            <span id=zeit2 class="b"></span>
+            <span id=zeit3 class="b"></span>
+            <span id=zeit4 class="b"></span>
+            <span id=zeit5 class="b"></span>
+            <span id=zeit6 class="b"></span>
+            <span id=zeit7 class="b"></span>
+            <span id=zeit8 class="b"></span>
+            <span id=zeit9 class="b"></span>
+            <span id=zeit10 class="b"></span>
+            <span id=zeit11 class="b"></span>
+            <span id=zeit12 class="b"></span>
+            <span id=zeit13 class="b"></span>
+            <span id=zeit14 class="b"></span>
+            <span id=zeit15 class="b"></span>
+            <span id=zeit16 class="b"></span>
+        </div>
+
+        <div id=stafelzeile1 class="tafelillu">
+            <span id=block1 class="a"></span>
+            <span id=block2 class="a"></span>
+            <span id=block3 class="a"></span>
+            <span id=block4 class="a"></span>
+        </div>
+        <br>
+
+        <div id=stafelzeile2 class="tafelillu">
+            <span id=block5 class="a"></span>
+            <span id=block6 class="a"></span>
+            <span id=block7 class="a"></span>
+            <span id=block8 class="a"></span>
+        </div>
+        <br>
+
+        <div id=stafelzeile3 class="tafelillu">
+            <span id=block9 class="a"></span>
+            <span id=block10 class="a"></span>
+            <span id=block11 class="a"></span>
+            <span id=block12 class="a"></span>
+        </div>
+        <br>
+
+        <div id=stafelzeile4 class="tafelillu">
+            <span id=block13 class="a"></span>
+            <span id=block14 class="a"></span>
+            <span id=block15 class="a"></span>
+            <span id=block16 class="a"></span>
+        </div>
+        <br>
+        <br>
         
-        <input type="text" id="bpm" value="90"></input>
+        <!-- <input type="text" id="bpm" value="90"></input> -->
         <div class="slidecontainer">
-            <input type="range" min="1" max="100" value="50" class="slider" id="bpmSlider">
+            <input type="range" min="60" max="140" value="90" class="slider" id="bpmSlider">
         </div>
+        <div id="bpmOutput">90 bpm</div>
 
-        <div id="bpmOutput"></div>
         <div class="slidecontainer">
-            <input type="range" min="1" max="20" value="10" class="slider" id="gainSlider">
+            <input type="range" min="-40" max="40" value="0" class="slider" id="gainSlider">
         </div>
+        <div id="gainOutput" class="output">0 dB</div>
 
-        <div id="gainOutput"></div>
         <div id="test"></div>
 
         <script src="beat_tafel_audio.js"></script>
