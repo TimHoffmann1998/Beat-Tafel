@@ -68,7 +68,7 @@ function nextNote() {
 
     // Advance the beat number, wrap to zero
     currentNote++;
-    if (currentNote === 7) {
+    if (currentNote === 15) {
             currentNote = 0;
     }
 }
