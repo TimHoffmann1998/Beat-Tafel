@@ -78,19 +78,19 @@ function  updateGrid(Note){
 
     for (let i = 0; i < 15; i++){
         if (Note = 15){
-            document.getElementById(id).style.color("red");
+            document.getElementById(id).style.backgroundColor = "red";
         }
         else if (Note = 4){
-            document.getElementById(id).style.color("yellow");
+            document.getElementById(id).style.backgroundColor = "yellow";
         }
         else if (Note = 8){
-            document.getElementById(id).style.color("magenta");
+            document.getElementById(id).style.backgroundColor = "magenta";
         }
         else if (Note = 1){
-            document.getElementById(id).style.color("green");
+            document.getElementById(id).style.backgroundColor = "green";
         }
         else if (Note = 10){
-            document.getElementById(id).style.color("cyan");
+            document.getElementById(id).style.backgroundColor = "cyan";
         };
     }
 }
