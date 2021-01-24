@@ -75,6 +75,9 @@ function nextNote() {
 
 function  updateGrid(Note, feldnr){
     id = "block" + (feldnr + 1);
+    
+    console.log(Note)
+    console.log(feldnr)
 
     if (Note = 15){
         document.getElementById(id).style.backgroundColor = "red";
