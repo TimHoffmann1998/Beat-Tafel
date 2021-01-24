@@ -3,7 +3,7 @@ let gainNode = context.createGain();
 gainNode.gain.value = 0.5;
 gainNode.connect(context.destination);
 
-let bpm = 90;
+let bpm = bpmSlider.value;
 let achtel = (60/bpm)*4/8;
 let gain = 0;
 
@@ -75,7 +75,8 @@ function nextNote() {
 
 
 function playNotes(beatNumber, time) {
-    
+
+
     if (takt[0][currentNote] === 1) {
         playSound(audioBuffers[0], time)
     }
@@ -92,7 +93,7 @@ function playNotes(beatNumber, time) {
 
 function scheduler() {
     // while there are notes that will need to play before the next interval, schedule them and advance the pointer.
-    while (nextNoteTime < context.currentTime + scheduleAheadTime && isPlaying) {
+    while (isPlaying) {
         playNotes(currentNote, nextNoteTime);
         nextNote();
     }
