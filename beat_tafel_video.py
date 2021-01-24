@@ -19,7 +19,7 @@ midiOutput = mido.open_output("LoopBe Internal MIDI 1")
 
 
 # Liste mit allen Farben (Farbton, Sättigung, Hellwert)
-colorListe = [107,90,90, 170,90,90, 95,90,90, 20,90,90, 62,90,90]#, 104,90,90, 130,90,90]
+colorListe = [107,90,90, 170,90,90, 95,90,90, 20,90,90, 62,90,90, 4,90,90]
 
 # Einbindung des Videosignals
 #cap = cv2.VideoCapture('beat_tafel_testvideo.mp4')
@@ -31,7 +31,6 @@ cap = cv2.VideoCapture(0)
 # Senden der Infomationen über MIDI
 def sendControlChange(x):
     x = int(x)
-    print(x)
     message = mido.Message('control_change', control=3, value=x)
     midiOutput.send(message)
 
@@ -112,10 +111,10 @@ def trackCode (Liste):
                 elif feldData[0] == "62":
                     #[0,0,0,1]
                     taktCode = 1
-                '''
-                elif feldData[0] == "130":
+
+                elif feldData[0] == "4":
                     #[1,1,1,1]
-                    taktCode = 15'''
+                    taktCode = 15
                                     
 
                 colorDataY = int(feldData[1])
@@ -216,7 +215,7 @@ while cap.isOpened():
             colorNumb = (colorListe[colorListeIndex])
 
             # Nach Farbe suchen
-            hueRange = cv2.inRange(h, colorListe[colorListeIndex] - 10, colorListe[colorListeIndex] + 10)
+            hueRange = cv2.inRange(h, colorListe[colorListeIndex] - 6, colorListe[colorListeIndex] + 6)
             satRange = cv2.inRange(s, 40, 255)
             valRange = cv2.inRange(v, 25, 255)
             
@@ -228,7 +227,7 @@ while cap.isOpened():
             #cv2.imshow('Video', maskeFarbe)
 
             # Median bilden
-            ksize = 11
+            ksize = 21
 
             median = cv2.medianBlur(maskeFarbe, ksize)
             cv2.imshow('Video_Masken', median)
