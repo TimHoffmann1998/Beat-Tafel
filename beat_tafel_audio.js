@@ -3,7 +3,7 @@ let gainNode = context.createGain();
 gainNode.gain.value = 0.5;
 gainNode.connect(context.destination);
 
-let bpm = bpmSlider.value;
+let bpm = 90;
 let achtel = (60/bpm)*4/8;
 let gain = 0;
 
@@ -73,9 +73,30 @@ function nextNote() {
     }
 }
 
+function  updateGrid(Note){
+    for (let i = 0; i < 15; i++){
+        if (Note = 15){
+            document.getElementById("#block" + (i+1)).style.color("red");
+        };
+        else if (Note = 4){
+            document.getElementById("#block" + (i+1)).style.color("yellow");
+        };
+        else if (Note = 8){
+            document.getElementById("#block" + (i+1)).style.color("magenta");
+        };
+        else if (Note = 1){
+            document.getElementById("#block" + (i+1)).style.color("green");
+        };
+        else if (Note = 10){
+            document.getElementById("#block" + (i+1)).style.color("cyan");
+        };
+    }
+
+
+}
 
 function playNotes(beatNumber, time) {
-
+    
 
     if (takt[0][currentNote] === 1) {
         playSound(audioBuffers[0], time)
@@ -93,7 +114,7 @@ function playNotes(beatNumber, time) {
 
 function scheduler() {
     // while there are notes that will need to play before the next interval, schedule them and advance the pointer.
-    while (isPlaying) {
+    while (nextNoteTime < context.currentTime + scheduleAheadTime && isPlaying) {
         playNotes(currentNote, nextNoteTime);
         nextNote();
     }
@@ -155,11 +176,12 @@ function onMIDIMessage(event) {
             taktpreload[Math.floor(counter/4)].push(parseInt(dec2bin(event.data[2])[i], 10));
         }
         counter += 1;
+        updateGrid(event.data[2]);
     };
 
     if (counter == 16){
         takt = taktpreload;
-        console.log(takt)
-        taktpreload = [[],[],[],[]]
+        console.log(takt);
+        taktpreload = [[],[],[],[]];
     };
 };
