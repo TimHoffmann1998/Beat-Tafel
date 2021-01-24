@@ -54,7 +54,7 @@ span.a {
   width: 4em;
   height: 3em;
   padding: 1em;
-  background-color: yellow; 
+  background-color: rgb(150, 150, 150); 
 }
 
 .slidecontainer {
