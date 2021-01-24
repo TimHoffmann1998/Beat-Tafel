@@ -73,9 +73,8 @@ function nextNote() {
     }
 }
 
-function  updateGrid(Note){
-    id = "block" + (i+1)
-
+function  updateGrid(Note, feldnr){
+    id = "block" + (feldnr + 1);
 
     if (Note = 15){
         document.getElementById(id).style.backgroundColor = "red";
@@ -175,8 +174,8 @@ function onMIDIMessage(event) {
         for (i = 0; i < 4; i++){
             taktpreload[Math.floor(counter/4)].push(parseInt(dec2bin(event.data[2])[i], 10));
         }
+        updateGrid(event.data[2], counter);
         counter += 1;
-        updateGrid(event.data[2]);
     };
 
     if (counter == 16){
