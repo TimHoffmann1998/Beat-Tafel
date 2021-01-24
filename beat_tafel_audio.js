@@ -75,7 +75,7 @@ function nextNote() {
 
 function  updateGrid(Note, feldnr){
     id = "block" + (feldnr + 1);
-    
+
     console.log(Note)
     console.log(feldnr)
 
@@ -93,6 +93,9 @@ function  updateGrid(Note, feldnr){
     }
     else if (Note = 10){
         document.getElementById(id).style.backgroundColor = "cyan";
+    }
+    else if (Note = 10){
+        document.getElementById(id).style.backgroundColor = "grey";
     }
 }
 
