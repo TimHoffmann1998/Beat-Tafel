@@ -74,9 +74,8 @@ function nextNote() {
 }
 
 
-function scheduleNote(beatNumber, time) {
-
-
+function playNotes(beatNumber, time) {
+    
     if (takt[0][currentNote] === 1) {
         playSound(audioBuffers[0], time)
     }
@@ -94,7 +93,7 @@ function scheduleNote(beatNumber, time) {
 function scheduler() {
     // while there are notes that will need to play before the next interval, schedule them and advance the pointer.
     while (nextNoteTime < context.currentTime + scheduleAheadTime && isPlaying) {
-        scheduleNote(currentNote, nextNoteTime);
+        playNotes(currentNote, nextNoteTime);
         nextNote();
     }
     timerID = window.setTimeout(scheduler, lookahead);
