@@ -77,25 +77,23 @@ function  updateGrid(Note){
     for (let i = 0; i < 15; i++){
         if (Note = 15){
             document.getElementById("#block" + (i+1)).style.color("red");
-        };
+        }
         else if (Note = 4){
             document.getElementById("#block" + (i+1)).style.color("yellow");
-        };
+        }
         else if (Note = 8){
             document.getElementById("#block" + (i+1)).style.color("magenta");
-        };
+        }
         else if (Note = 1){
             document.getElementById("#block" + (i+1)).style.color("green");
-        };
+        }
         else if (Note = 10){
             document.getElementById("#block" + (i+1)).style.color("cyan");
         };
     }
 
 
-}
-
-function playNotes(beatNumber, time) {
+function scheduleNote(beatNumber, time) {
     
 
     if (takt[0][currentNote] === 1) {
@@ -115,7 +113,7 @@ function playNotes(beatNumber, time) {
 function scheduler() {
     // while there are notes that will need to play before the next interval, schedule them and advance the pointer.
     while (nextNoteTime < context.currentTime + scheduleAheadTime && isPlaying) {
-        playNotes(currentNote, nextNoteTime);
+        scheduleNote(currentNote, nextNoteTime);
         nextNote();
     }
     timerID = window.setTimeout(scheduler, lookahead);
