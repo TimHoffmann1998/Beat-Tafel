@@ -76,22 +76,21 @@ function nextNote() {
 function  updateGrid(Note){
     id = "block" + (i+1)
 
-    for (let i = 0; i < 15; i++){
-        if (Note = 15){
-            document.getElementById(id).style.backgroundColor = "red";
-        }
-        else if (Note = 4){
-            document.getElementById(id).style.backgroundColor = "yellow";
-        }
-        else if (Note = 8){
-            document.getElementById(id).style.backgroundColor = "magenta";
-        }
-        else if (Note = 1){
-            document.getElementById(id).style.backgroundColor = "green";
-        }
-        else if (Note = 10){
-            document.getElementById(id).style.backgroundColor = "cyan";
-        };
+
+    if (Note = 15){
+        document.getElementById(id).style.backgroundColor = "red";
+    }
+    else if (Note = 4){
+        document.getElementById(id).style.backgroundColor = "yellow";
+    }
+    else if (Note = 8){
+        document.getElementById(id).style.backgroundColor = "magenta";
+    }
+    else if (Note = 1){
+        document.getElementById(id).style.backgroundColor = "green";
+    }
+    else if (Note = 10){
+        document.getElementById(id).style.backgroundColor = "cyan";
     }
 }
 
