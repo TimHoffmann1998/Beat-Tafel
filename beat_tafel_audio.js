@@ -91,6 +91,7 @@ function  updateGrid(Note){
             document.getElementById("#block" + (i+1)).style.color("cyan");
         };
     }
+}
 
 
 function scheduleNote(beatNumber, time) {
