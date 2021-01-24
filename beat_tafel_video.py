@@ -7,9 +7,6 @@ import mido
 # Hilfsvariable
 frameAuslesen = False
 colorListeIndex = 0
-#taktCode = []
-#feldNummerListe = []
-#ausgabeListe = ["","","","","","","","","","","","","","","",""]
 midiMax = True
 count = 0
 
@@ -17,16 +14,11 @@ count = 0
 print("Midi output ports: ", mido.get_output_names())
 midiOutput = mido.open_output("LoopBe Internal MIDI 1")
 
-
 # Liste mit allen Farben (Farbton, Sättigung, Hellwert)
 colorListe = [107,90,90, 170,90,90, 95,90,90, 20,90,90, 62,90,90, 4,90,90]
 
-# Einbindung des Videosignals
-#cap = cv2.VideoCapture('beat_tafel_testvideo.mp4')
-
-# Live-Video
+# Live-Video einlesen
 cap = cv2.VideoCapture(0)
-#cap=cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
 # Senden der Infomationen über MIDI
 def sendControlChange(x):
@@ -74,6 +66,7 @@ def feldNummer(maskeFarbe, contours):
 
     return(colorStrListe)
 
+
 def sortierung (taktCode, xWerteDifferenz, colorDataX, track):
     if colorDataX < xWerteDifferenz + xWerte[0]:
         ausgabeListe[(track * 4) + 0] = taktCode
@@ -86,6 +79,7 @@ def sortierung (taktCode, xWerteDifferenz, colorDataX, track):
                         
     elif colorDataX < xWerteDifferenz*4 + xWerte[0]:
         ausgabeListe[(track * 4) + 3] = taktCode
+
 
 # Einsotiernen der Farbfelder in die richtige Position
 def trackCode (Liste):
@@ -166,20 +160,13 @@ def trackCode (Liste):
     counter = 0
     for index in ausgabeListe:
         if counter < 16 and midiMax == True:
-            #print(i)
-            #print(counter)
             sendControlChange(index)
             counter += 1
+        
         else:
             None
 
     print(ausgabeListe)
-
-
-'''def kalibrierung(Liste):
-    for feldCode in Liste:
-        feldData = feldCode.split(".")'''
-
 
 
 # Hauptskript
@@ -187,7 +174,8 @@ while cap.isOpened():
     ret, frame = cap.read()
 
     if frameAuslesen == True:
-        print("test")
+        
+        # Hilfsvariablen
         colorListeIndex = 0
         taktCode = []
         feldNummerListe = []
@@ -198,9 +186,6 @@ while cap.isOpened():
         # An JS: neues Frame
         sendControlChange(127)
 
-        # Einlesen der einzelnen Frames
-        #ret, frame = cap.read()
-        
         # Konvertieren von BGR zu HSV
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         h,s,v = cv2.split(hsv)
@@ -219,12 +204,8 @@ while cap.isOpened():
             satRange = cv2.inRange(s, 40, 255)
             valRange = cv2.inRange(v, 25, 255)
             
-
-
             # Masken multiplizieren
-            #maskeFarbe = cv2.multiply(hueRange,satRange)
             maskeFarbe = hueRange*satRange*valRange
-            #cv2.imshow('Video', maskeFarbe)
 
             # Median bilden
             ksize = 21
@@ -237,10 +218,8 @@ while cap.isOpened():
             feldNummerListeFarbe = feldNummer(colorNumb, contours)
             feldNummerListe.append(feldNummerListeFarbe)
 
-            # nachste Farbe bearbeiten
+            # Nächste Farbe bearbeiten
             colorListeIndex += 3 
-
-            #cv2.imshow('Video', frame)
 
             if cv2.waitKey(30) != -1:
                 break
@@ -262,8 +241,7 @@ while cap.isOpened():
         else: 
             frameAuslesen = True
             count = 0   
-    #frameAuslesen = False
-    #break
+
 
 cap.release()
 cv2.destroyAllWindows()
