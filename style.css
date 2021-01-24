@@ -30,8 +30,8 @@ button {
 .zeitstrahl{
   background-color: rgba(128, 128, 128, 0.377);
   display: inline-block;
-  width: 30%;
-  height: 10%;
+  width: 30em;
+  height: 10em;
 }
 
 span.b{
@@ -45,8 +45,8 @@ span.b{
 .tafelillu{
   background-color: rgba(128, 128, 128, 0.199);
   display: inline-block;
-  width: 35%;
-  height: 35%;
+  width: 30em;
+  height: 5,9em;
 }
 
 span.a {
