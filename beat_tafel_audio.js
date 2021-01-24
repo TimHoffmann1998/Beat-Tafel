@@ -74,21 +74,23 @@ function nextNote() {
 }
 
 function  updateGrid(Note){
+    id = "block" + (i+1)
+
     for (let i = 0; i < 15; i++){
         if (Note = 15){
-            document.getElementById("#block" + (i+1)).style.color("red");
+            document.getElementById(id).style.color("red");
         }
         else if (Note = 4){
-            document.getElementById("#block" + (i+1)).style.color("yellow");
+            document.getElementById(id).style.color("yellow");
         }
         else if (Note = 8){
-            document.getElementById("#block" + (i+1)).style.color("magenta");
+            document.getElementById(id).style.color("magenta");
         }
         else if (Note = 1){
-            document.getElementById("#block" + (i+1)).style.color("green");
+            document.getElementById(id).style.color("green");
         }
         else if (Note = 10){
-            document.getElementById("#block" + (i+1)).style.color("cyan");
+            document.getElementById(id).style.color("cyan");
         };
     }
 }
