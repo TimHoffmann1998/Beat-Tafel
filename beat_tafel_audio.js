@@ -9,12 +9,15 @@ var audioBuffers = [];
 var takt = [[0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0]]
 var taktpreload = [[],[],[],[]]
 
-let lookahead = 25.0; // How frequently to call scheduling function (in milliseconds)
-let scheduleAheadTime = 0.1; // How far ahead to schedule audio (sec)
+let lookahead = (60/bpm)/8; // Wie oft die Schedule Funktion aufgerufen werden soll (darf nicht länger als die Beatlänge sein)
+//let scheduleAheadTime = (60/bpm)/6; // Wie viel vorher die Noten geplant werden sollen (darf nicht länger als die Beatlänge sein)
 
-let currentNote = 0;
-let nextNoteTime = 0.0; // when the next note is due.
+let currentNote = 0; // Auf welchem Taktschlag wir uns gerade befinden
+let nextNoteTime = 0.0; // Wann die nächste Note gespielt werden soll.
 
+let isPlaying = false;
+
+// Slider Setup
 const gainSlider = document.querySelector('#gainSlider');
 const gainOutput = document.querySelector('#gainOutput');
 const bpmSlider = document.querySelector('#bpmSlider');
@@ -29,16 +32,11 @@ bpmSlider.addEventListener('input', function() {
 
 gainSlider.addEventListener('input', function() {
     gainlinear = 10**(this.value/10);
-    console.log(this.value);
-    console.log(gainlinear);
     gainNode.gain.value = gainlinear;
     document.querySelector("#gainOutput").innerHTML = (this.value) + " dB";
 }, false);
 
-for (let i = 0; i <= 3; i++){
-    getAudioData(i, document.querySelector('#drumtype').value);
-}
-
+//Laden der Soundateien in einen AudioBuffer Array
 function getAudioData(i, drumtype) {
     fetch("DRUMS/" + drumtype + "/" + drumtype + (i + 1) + ".wav")
     .then(response => response.arrayBuffer())
@@ -49,6 +47,11 @@ function getAudioData(i, drumtype) {
     .catch(console.error);
 }
 
+for (let i = 0; i <= 3; i++){
+    getAudioData(i, document.querySelector('#drumtype').value);
+}
+
+//Änderung der Sounddateien bei Änderung des Schlagzeugsounds im Dropdown Menü
 document.querySelector('#drumtype').addEventListener('click', function(){
     for (let i = 0; i <= 3; i++){
         getAudioData(i, this.value);
@@ -62,18 +65,76 @@ function playSound(buffer, time) {
     source.start(time);
 }
 
+
 function nextNote() {
     const secondsPerBeat = 60.0 / bpm;
 
-    nextNoteTime += secondsPerBeat/2; // Add beat length to last beat time
+    nextNoteTime += secondsPerBeat/4; // Beatlänge (sechzehntel) auf die Zeit der nächsten Note addieren
 
-    // Advance the beat number, wrap to zero
+    // Zum nächsten Beat im Takt gehen und wenn der Takt voll ist wieder bei 0 anfangen
     currentNote++;
     if (currentNote === 16) {
             currentNote = 0;
     }
 }
 
+function playNotes(beatNumber, time) {
+    //Visuelle Darstellung des Taktes
+    if (beatNumber == 0){
+        document.getElementById("zeit" + beatNumber).style.backgroundColor = "orange";
+        document.getElementById("zeit" + 15).style.backgroundColor = "white";
+    }else if (beatNumber%4 == 0){
+        document.getElementById("zeit" + beatNumber).style.backgroundColor = "orange";
+        document.getElementById("zeit" + (beatNumber-1)).style.backgroundColor = "white";
+    }else {
+        document.getElementById("zeit" + beatNumber).style.backgroundColor = "blue";
+        document.getElementById("zeit" + (beatNumber-1)).style.backgroundColor = "white";
+    }
+    
+
+    //Wenn im Taktarray an der momentanen Taktposition eine 1 steht, wird die jeweilige Note gespielt
+    if (takt[0][currentNote] === 1) {
+        playSound(audioBuffers[0], time)
+    }
+    if (takt[1][currentNote] === 1) {
+        playSound(audioBuffers[1], time)
+    }
+    if (takt[2][currentNote] === 1) {
+        playSound(audioBuffers[2], time)
+    }
+    if (takt[3][currentNote] === 1) {
+        playSound(audioBuffers[3], time)
+    }
+}
+
+function scheduler() {
+    // die nächste Note wird geplant, wenn die currentTime inkl. der Planungszeit größer wird als die Zeit in der die Note gespielt werden soll
+    // dann werden die Noten gespielt und die Zeit für eine Achtel wird auf die nextNoteTime addiert.
+    // zum Schluss wird die Funktion pausiert, damit das Programm währenddessen andere Dinge ausführen kann
+    while (nextNoteTime < context.currentTime && isPlaying) {
+        playNotes(currentNote, nextNoteTime);
+        nextNote();
+    }
+    timerID = window.setTimeout(scheduler, lookahead);
+}
+
+document.querySelector("#playButton").addEventListener("click", function(){
+        isPlaying = !isPlaying;
+        if (isPlaying){
+            document.getElementById('playButton').style.backgroundImage = 'url(stopbutton.png)';
+            this.innerHTML = "Stop";
+            currentNote = 0;
+            nextNoteTime = context.currentTime;  // die erste note wird gespielt, wenn auf Play gedrückt wird
+            scheduler(); // Start des Schedulers
+        }    
+        else{
+            this.innerHTML = "Play";
+            document.getElementById('zeit' + (currentNote - 1)).style.backgroundColor = 'white';
+            document.getElementById('playButton').style.backgroundImage = 'url(playbutton.png)';
+        }
+})
+
+//Update der visuellen Darstellung der Beattafel
 function  updateGrid(Note, feldnr){
     id = "block" + (feldnr + 1);
 
@@ -95,62 +156,9 @@ function  updateGrid(Note, feldnr){
     else if (Note == 0){
         document.getElementById(id).style.backgroundColor = "grey";
     }
-
 }
 
-
-function scheduleNote(beatNumber, time) {
-    if (beatNumber == 0){
-        document.getElementById("zeit" + beatNumber).style.backgroundColor = "orange";
-        document.getElementById("zeit" + 15).style.backgroundColor = "white";
-    }else{
-        document.getElementById("zeit" + beatNumber).style.backgroundColor = "orange";
-        document.getElementById("zeit" + (beatNumber-1)).style.backgroundColor = "white";
-    }
-
-    if (takt[0][currentNote] === 1) {
-        playSound(audioBuffers[0], time)
-    }
-    if (takt[1][currentNote] === 1) {
-        playSound(audioBuffers[1], time)
-    }
-    if (takt[2][currentNote] === 1) {
-        playSound(audioBuffers[2], time)
-    }
-    if (takt[3][currentNote] === 1) {
-        playSound(audioBuffers[3], time)
-    }
-}
-
-function scheduler() {
-    // while there are notes that will need to play before the next interval, schedule them and advance the pointer.
-    while (nextNoteTime < context.currentTime + scheduleAheadTime && isPlaying) {
-        scheduleNote(currentNote, nextNoteTime);
-        nextNote();
-    }
-    timerID = window.setTimeout(scheduler, lookahead);
-}
-
-
-let isPlaying = false;
-
-document.querySelector("#playButton").addEventListener("click", function(){
-        isPlaying = !isPlaying;
-        if (isPlaying){
-            this.innerHTML = "Stop";
-            currentNote = 0;
-            document.getElementById('playButton').style.backgroundImage = 'url(stopbutton.png)';
-            nextNoteTime = context.currentTime;
-            scheduler(); // kick off scheduling
-        }    
-        else{
-            this.innerHTML = "Play";
-            document.getElementById('zeit' + (currentNote - 1)).style.backgroundColor = 'white';
-            document.getElementById('playButton').style.backgroundImage = 'url(playbutton.png)';
-        }
-})
-
-
+// Midi initialisierung
 if (navigator.requestMIDIAccess) {
     navigator.requestMIDIAccess({sysex: false}).then(function (midiAccess) {
         midi = midiAccess;
