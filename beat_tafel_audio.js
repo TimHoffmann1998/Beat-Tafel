@@ -4,8 +4,6 @@ gainNode.gain.value = 0.5;
 gainNode.connect(context.destination);
 
 let bpm = 90;
-let achtel = (60/bpm)*4/8;
-let gain = 0;
 
 var audioBuffers = [];
 var takt = [[0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0]]
@@ -21,8 +19,8 @@ const gainSlider = document.querySelector('#gainSlider');
 const gainOutput = document.querySelector('#gainOutput');
 const bpmSlider = document.querySelector('#bpmSlider');
 const bpmOutput = document.querySelector('#bpmOutput');
-bpmOutput.innerHTML = bpmSlider.value;
-gainOutput.innerHTML = gainSlider.value;
+bpmOutput.innerHTML = bpmSlider.value + " bpm";
+gainOutput.innerHTML = gainSlider.value + " dB";
 
 bpmSlider.addEventListener('input', function() {
     bpm = Number(this.value);
@@ -30,7 +28,10 @@ bpmSlider.addEventListener('input', function() {
 }, false);
 
 gainSlider.addEventListener('input', function() {
-    gain = Number(this.value);
+    gainlinear = 10**(this.value/10);
+    console.log(this.value);
+    console.log(gainlinear);
+    gainNode.gain.value = gainlinear;
     document.querySelector("#gainOutput").innerHTML = (this.value) + " dB";
 }, false);
 
@@ -68,7 +69,7 @@ function nextNote() {
 
     // Advance the beat number, wrap to zero
     currentNote++;
-    if (currentNote === 15) {
+    if (currentNote === 16) {
             currentNote = 0;
     }
 }
@@ -76,32 +77,36 @@ function nextNote() {
 function  updateGrid(Note, feldnr){
     id = "block" + (feldnr + 1);
 
-    console.log(Note)
-    console.log(feldnr)
-
-    if (Note = 15){
+    if (Note == 15){
         document.getElementById(id).style.backgroundColor = "red";
     }
-    else if (Note = 4){
+    else if (Note == 4){
         document.getElementById(id).style.backgroundColor = "yellow";
     }
-    else if (Note = 8){
+    else if (Note == 8){
         document.getElementById(id).style.backgroundColor = "magenta";
     }
-    else if (Note = 1){
+    else if (Note == 1){
         document.getElementById(id).style.backgroundColor = "green";
     }
-    else if (Note = 10){
+    else if (Note == 10){
         document.getElementById(id).style.backgroundColor = "cyan";
     }
-    else if (Note = 10){
+    else if (Note == 0){
         document.getElementById(id).style.backgroundColor = "grey";
     }
+
 }
 
 
 function scheduleNote(beatNumber, time) {
-    
+    if (beatNumber == 0){
+        document.getElementById("zeit" + beatNumber).style.backgroundColor = "orange";
+        document.getElementById("zeit" + 15).style.backgroundColor = "white";
+    }else{
+        document.getElementById("zeit" + beatNumber).style.backgroundColor = "orange";
+        document.getElementById("zeit" + (beatNumber-1)).style.backgroundColor = "white";
+    }
 
     if (takt[0][currentNote] === 1) {
         playSound(audioBuffers[0], time)
@@ -140,6 +145,7 @@ document.querySelector("#playButton").addEventListener("click", function(){
         }    
         else{
             this.innerHTML = "Play";
+            document.getElementById('zeit' + (currentNote - 1)).style.backgroundColor = 'white';
             document.getElementById('playButton').style.backgroundImage = 'url(playbutton.png)';
         }
 })
@@ -186,7 +192,6 @@ function onMIDIMessage(event) {
 
     if (counter == 16){
         takt = taktpreload;
-        console.log(takt);
         taktpreload = [[],[],[],[]];
     };
 };
