@@ -51,6 +51,42 @@ span.b{
 
 span.a {
   display: inline-block; /* the default for span */
+  background-image: url(kick.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 4em;
+  height: 3em;
+  padding: 1em;
+  background-color: rgb(150, 150, 150); 
+}
+
+span.c {
+  display: inline-block; /* the default for span */
+  background-image: url(hat.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 4em;
+  height: 3em;
+  padding: 1em;
+  background-color: rgb(150, 150, 150); 
+}
+
+span.d {
+  display: inline-block; /* the default for span */
+  background-image: url(snare.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 4em;
+  height: 3em;
+  padding: 1em;
+  background-color: rgb(150, 150, 150); 
+}
+
+span.e {
+  display: inline-block; /* the default for span */
+  background-image: url(cymbals.png);
+  background-repeat: no-repeat;
+  background-position: center;
   width: 4em;
   height: 3em;
   padding: 1em;
