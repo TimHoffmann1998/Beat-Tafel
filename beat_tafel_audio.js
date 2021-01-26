@@ -162,9 +162,9 @@ if (navigator.requestMIDIAccess) {
     navigator.requestMIDIAccess({sysex: false}).then(function (midiAccess) {
         midi = midiAccess;
         var inputs = midi.inputs.values();
-        // loop through all inputs
+        // Durch alle Inputs loopen
         for (var input = inputs.next(); input && !input.done; input = inputs.next()) {
-            // listen for midi messages
+            // auf Midi Nachrichten warten
             input.value.onmidimessage = onMIDIMessage;
         }
     });
@@ -184,9 +184,11 @@ counter = 0
 
 function onMIDIMessage(event) {
     document.querySelector("#test").innerHTML = event.data[2];
+    //Initialwert: hier starten die Taktnachrichten
     if (event.data[2] == 127){
         counter = 0;      
     };
+    //16 Nachrichten zählen und einzelne Bits in Taktarray schieben
     if (counter <= 15 && event.data[2] != 127) {
         for (i = 0; i < 4; i++){
             taktpreload[Math.floor(counter/4)].push(parseInt(dec2bin(event.data[2])[i], 10));
@@ -195,6 +197,7 @@ function onMIDIMessage(event) {
         counter += 1;
     };
 
+    //Takt übernehmen und zurücksetzen
     if (counter == 16){
         takt = taktpreload;
         taktpreload = [[],[],[],[]];
