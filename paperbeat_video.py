@@ -15,15 +15,15 @@ print("Midi output ports: ", mido.get_output_names())
 midiOutput = mido.open_output("LoopBe Internal MIDI 1")
 
 # Liste mit allen Farben (Farbton, Sättigung, Hellwert)
-colorListe = [107,90,90, 170,90,90, 95,90,90, 20,90,90, 62,90,90, 4,90,90]
+colorListe = [107,90,90, 170,90,90, 95,90,90, 20,90,90, 55,90,90, 4,90,90]
 
 # Live-Video einlesen
 cap = cv2.VideoCapture(0)
 
 # Senden der Infomationen über MIDI
-def sendControlChange(x):
-    x = int(x)
-    message = mido.Message('control_change', control=3, value=x)
+def sendControlChange(wert):
+    wert = int(wert)
+    message = mido.Message('control_change', control=3, value=wert)
     midiOutput.send(message)
 
 
@@ -38,16 +38,20 @@ def regionErmitteln (index, countoursRange):
     return (indexRange)
 
 
-# Jedem Feld eine eindeutige Bezeichung zuordnen
+# Jedem Feld eine eindeutige Feeldnummer zuordnen
 def feldNummer(maskeFarbe, contours):
     colorStrListe = []
     for index in range(len(contours)):
         indexRange = regionErmitteln(index, range(len(contours)))
         cv2.drawContours(median,contours,index,(255,255,255),cv2.FILLED)
         
+        # Für jede Region einen Schwerpunkt berechnen
+
         for region in indexRange:
             cv2.drawContours(median,contours,region,(0,0,0),cv2.FILLED)
-            
+
+        # Schwerpunkt berechnen
+
         M = cv2.moments(median)
     
         if  M["m00"] == 0:
@@ -61,12 +65,14 @@ def feldNummer(maskeFarbe, contours):
             cYRegion = int(M["m01"] / M["m00"])
             cv2.circle(median, (cXRegion, cYRegion), 5, (255, 0, 255), -1)
 
+        # Feldnummer bilden    
         colorStr = str(colorNumb) + "." + str(cYRegion) + "." + str(cXRegion)
         colorStrListe.append(colorStr)
 
     return(colorStrListe)
 
 
+# Sortieren der Trackcodes(Taktcodes) auf der X-Achse
 def sortierung (taktCode, xWerteDifferenz, colorDataX, track):
     if colorDataX < xWerteDifferenz + xWerte[0]:
         ausgabeListe[(track * 4) + 0] = taktCode
@@ -88,6 +94,8 @@ def trackCode (Liste):
             taktCode = []    
             feldData = feldCode.split(".")
 
+            # Taktcode bestimmen (107 = Kalibrierungsfelder)
+
             if feldData[0] != "107":
 
                 if feldData[0] == "170":
@@ -102,7 +110,7 @@ def trackCode (Liste):
                     #[0,1,0,0]
                     taktCode = 4
                 
-                elif feldData[0] == "62":
+                elif feldData[0] == "55":
                     #[0,0,0,1]
                     taktCode = 1
 
@@ -110,6 +118,7 @@ def trackCode (Liste):
                     #[1,1,1,1]
                     taktCode = 15
                                     
+                # Sortieren der Trackcodes(Taktcodes) auf der Y-Achse
 
                 colorDataY = int(feldData[1])
                 colorDataX = int(feldData[2])
@@ -132,16 +141,21 @@ def trackCode (Liste):
             
             elif feldData[0] == "107":
                 
+                # Daten der Kalibrierung auswerten
+
                 yWerte.append(int(feldData[1]))
                 xWerte.append(int(feldData[2]))
 
+                # Sortieren der Daten nach größe
                 yWerte.sort()
                 xWerte.sort()
 
+                # Bereich der einzelnen Felder bestimmen
                 yWerteDifferenz = ((max(yWerte) - min(yWerte)) / 4)
                 xWerteDifferenz = ((max(xWerte) - min(xWerte)) / 4)
                 yWerteVerschiebung = yWerte[0]
                 xWerteVerschiebung = xWerte[0]
+
 
 
     # leere Elemente mit 0en auffüllen
@@ -221,10 +235,9 @@ while cap.isOpened():
             # Nächste Farbe bearbeiten
             colorListeIndex += 3 
 
-            if cv2.waitKey(30) != -1:
+            if cv2.waitKey(25) != -1:
                 break
             
-            #time.sleep(1)
 
         print(feldNummerListe) 
 
@@ -234,6 +247,8 @@ while cap.isOpened():
     else:
         None
 
+
+    # Alle 30 Frames das Auslesen wieder aktivieren
     if frameAuslesen == False:
         if count < cap.get(cv2.CAP_PROP_FPS):
             count += 1
@@ -242,6 +257,11 @@ while cap.isOpened():
             frameAuslesen = True
             count = 0   
 
+    cv2.imshow('Video_Original', frame)
+
+    if cv2.waitKey(25) != -1:
+        break
+            
 
 cap.release()
 cv2.destroyAllWindows()
