@@ -12,7 +12,7 @@ div {
 
 /* Play & Stopp Button */
 button {
-  background-image: url(playbutton.png);
+  background-image: url(Icons/playbutton.png);
   background-repeat: no-repeat;
   background-position: center;
   background-color: #2fc279;
@@ -57,7 +57,7 @@ span.b{
 /* Rasterblöcke obere Reihe (Kickdrum) */
 span.a {
   display: inline-block;
-  background-image: url(kick.png);
+  background-image: url(Icons/kick.png);
   background-repeat: no-repeat;
   background-position: center;
   width: 4em;
@@ -69,7 +69,7 @@ span.a {
 /* Rasterblöcke 2. Reihe (Hi-Hat) */
 span.c {
   display: inline-block;
-  background-image: url(hat.png);
+  background-image: url(Icons/hat.png);
   background-repeat: no-repeat;
   background-position: center;
   width: 4em;
@@ -81,7 +81,7 @@ span.c {
 /* Rasterblöcke 3. Reihe (Snaredrum) */
 span.d {
   display: inline-block;
-  background-image: url(snare.png);
+  background-image: url(Icons/snare.png);
   background-repeat: no-repeat;
   background-position: center;
   width: 4em;
@@ -93,7 +93,7 @@ span.d {
 /* Rasterblöcke untere Reihe (Open Hat/Reverse) */
 span.e {
   display: inline-block;
-  background-image: url(cymbals.png);
+  background-image: url(Icons/cymbals.png);
   background-repeat: no-repeat;
   background-position: center;
   width: 4em;

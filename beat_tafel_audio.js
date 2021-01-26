@@ -120,7 +120,7 @@ function scheduler() {
 document.querySelector("#playButton").addEventListener("click", function(){
         isPlaying = !isPlaying;
         if (isPlaying){
-            document.getElementById('playButton').style.backgroundImage = 'url(stopbutton.png)';
+            document.getElementById('playButton').style.backgroundImage = 'url(Icons/stopbutton.png)';
             this.innerHTML = "Stop";
             currentNote = 0;
             nextNoteTime = context.currentTime;  // die erste note wird gespielt, wenn auf Play gedrückt wird
@@ -129,7 +129,7 @@ document.querySelector("#playButton").addEventListener("click", function(){
         else{
             this.innerHTML = "Play";
             document.getElementById('zeit' + (currentNote - 1)).style.backgroundColor = 'white';
-            document.getElementById('playButton').style.backgroundImage = 'url(playbutton.png)';
+            document.getElementById('playButton').style.backgroundImage = 'url(Icons/playbutton.png)';
         }
 })
 
