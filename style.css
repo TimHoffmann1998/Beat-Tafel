@@ -10,6 +10,7 @@ div {
   font-family: monospace;
 }
 
+/* Play & Stopp Button */
 button {
   background-image: url(playbutton.png);
   background-repeat: no-repeat;
@@ -22,11 +23,13 @@ button {
   font-family: monospace;
 }
 
+/* Drumstyle Dropdown */
 .drumtype {
   font-size: 1.8em;
   padding: 0.4em 1.0em;
 }
 
+/* Blockreihenanzeige des aktuellen Zeitpunktes */
 .zeitstrahl{
   background-color: rgba(128, 128, 128, 0.377);
   display: inline-block;
@@ -34,6 +37,7 @@ button {
   height: 10em;
 }
 
+/* Einzelne Blocks im "Zeitstrahl" */
 span.b{
   display: inline-block;
   width: 0.05em;
@@ -42,6 +46,7 @@ span.b{
   background-color: rgb(255, 255, 255);
 }
 
+/* Rasterhintergrund */
 .tafelillu{
   background-color: rgba(128, 128, 128, 0.199);
   display: inline-block;
@@ -49,6 +54,7 @@ span.b{
   height: 5,9em;
 }
 
+/* Rasterblöcke obere Reihe (Kickdrum) */
 span.a {
   display: inline-block;
   background-image: url(kick.png);
@@ -60,6 +66,7 @@ span.a {
   background-color: rgb(150, 150, 150); 
 }
 
+/* Rasterblöcke 2. Reihe (Hi-Hat) */
 span.c {
   display: inline-block;
   background-image: url(hat.png);
@@ -71,6 +78,7 @@ span.c {
   background-color: rgb(150, 150, 150); 
 }
 
+/* Rasterblöcke 3. Reihe (Snaredrum) */
 span.d {
   display: inline-block;
   background-image: url(snare.png);
@@ -82,6 +90,7 @@ span.d {
   background-color: rgb(150, 150, 150); 
 }
 
+/* Rasterblöcke untere Reihe (Open Hat/Reverse) */
 span.e {
   display: inline-block;
   background-image: url(cymbals.png);
