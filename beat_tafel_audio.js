@@ -9,8 +9,7 @@ var audioBuffers = [];
 var takt = [[0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0]]
 var taktpreload = [[],[],[],[]]
 
-let lookahead = (60/bpm)/8; // Wie oft die Schedule Funktion aufgerufen werden soll (darf nicht länger als die Beatlänge sein)
-//let scheduleAheadTime = (60/bpm)/6; // Wie viel vorher die Noten geplant werden sollen (darf nicht länger als die Beatlänge sein)
+let timeout = (60/bpm)/20; // Wie oft die Schedule Funktion aufgerufen werden soll (darf nicht zu groß sein, um Ungenauigkeiten zu verhindern)
 
 let currentNote = 0; // Auf welchem Taktschlag wir uns gerade befinden
 let nextNoteTime = 0.0; // Wann die nächste Note gespielt werden soll.
@@ -115,7 +114,7 @@ function scheduler() {
         playNotes(currentNote, nextNoteTime);
         nextNote();
     }
-    timerID = window.setTimeout(scheduler, lookahead);
+    timerID = window.setTimeout(scheduler, timeout);
 }
 
 document.querySelector("#playButton").addEventListener("click", function(){
@@ -175,11 +174,9 @@ if (navigator.requestMIDIAccess) {
 
 function dec2bin(dec){
     bin = (dec >>> 0).toString(2);
-    ///console.log(bin)
     while (bin.length < 4){
         bin = 0 + bin 
     }
-    ///console.log(bin)
     return bin
 }
 
